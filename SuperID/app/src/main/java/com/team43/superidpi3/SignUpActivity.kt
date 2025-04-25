@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -37,6 +38,11 @@ import androidx.core.content.ContextCompat
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.team43.superidpi3.ui.theme.SuperIDBlue
+import com.team43.superidpi3.ui.theme.SuperIDWhite
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.OutlinedTextFieldDefaults
+
 
 class SignUpActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -224,7 +230,7 @@ fun CadastroUsuario() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(75.dp)
-                .background(Color(0xFF2C3E94))
+                .background(SuperIDBlue)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -252,7 +258,18 @@ fun CadastroUsuario() {
             value = nome,
             onValueChange = { nome = it },
             label = { Text("Nome completo") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = SuperIDWhite,
+                unfocusedContainerColor = SuperIDWhite,
+                focusedIndicatorColor = SuperIDBlue,
+                unfocusedIndicatorColor = SuperIDBlue,
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black,
+                cursorColor = Color.Black,
+                focusedLabelColor = Color.Black,
+                unfocusedLabelColor = Color.Black
+            )
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -261,7 +278,18 @@ fun CadastroUsuario() {
             value = email,
             onValueChange = { email = it },
             label = { Text("E-mail") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = SuperIDWhite,
+                unfocusedContainerColor = SuperIDWhite,
+                focusedIndicatorColor = SuperIDBlue,
+                unfocusedIndicatorColor = SuperIDBlue,
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black,
+                cursorColor = Color.Black,
+                focusedLabelColor = Color.Black,
+                unfocusedLabelColor = Color.Black
+            )
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -271,7 +299,18 @@ fun CadastroUsuario() {
             onValueChange = { senha = it },
             label = { Text("Senha Mestre") },
             modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation()
+            visualTransformation = PasswordVisualTransformation(),
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = SuperIDWhite,
+                unfocusedContainerColor = SuperIDWhite,
+                focusedIndicatorColor = SuperIDBlue,
+                unfocusedIndicatorColor = SuperIDBlue,
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black,
+                cursorColor = Color.Black,
+                focusedLabelColor = Color.Black,
+                unfocusedLabelColor = Color.Black
+            )
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -302,6 +341,7 @@ fun CadastroUsuario() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = SuperIDBlue),
             enabled = termosAceitos
         ) {
             Text(text = "Cadastrar")
@@ -322,3 +362,4 @@ fun CadastroUsuario() {
         }
     }
 }
+
