@@ -1,5 +1,4 @@
 package com.team43.superidpi3
-//TODO: Deixar em uma linha so sem caixa de texto e alterar pra ao inves de roxo ser azul o contorno da linha
 import android.Manifest
 import android.content.Context
 import android.content.Intent
