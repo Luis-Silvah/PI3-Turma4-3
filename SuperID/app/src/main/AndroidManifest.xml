@@ -11,6 +11,7 @@
 
 
 
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -26,10 +27,17 @@
         <activity android:name=".SignUpActivity" />
 
         <!-- Tela de Login -->
-        <activity android:name=".SignInActivity" />
+        <activity
+            android:name=".SignInActivity"
+            android:exported="true" />
 
         <!-- Tela de Boas-vindas -->
         <activity android:name=".WelcomeActivity" />
+
+        <!-- Tela de Esqueci a Senha -->
+        <activity
+            android:name=".ForgotPasswordActivity"
+            android:exported="true" />
 
         <!-- Tela principal -->
         <activity
