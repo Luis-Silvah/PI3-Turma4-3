@@ -250,7 +250,7 @@ fun CadastroUsuario() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 32.dp, bottom = 8.dp),
-            verticalAlignment = Alignment.Top
+            verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
                 onClick = {

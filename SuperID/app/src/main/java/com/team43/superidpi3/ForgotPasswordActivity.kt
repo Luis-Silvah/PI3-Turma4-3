@@ -130,7 +130,7 @@ fun ForgotPasswordScreen() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 32.dp, bottom = 8.dp),
-            verticalAlignment = Alignment.Top
+            verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
                 onClick = {
@@ -157,8 +157,8 @@ fun ForgotPasswordScreen() {
                 painter = painterResource(id = R.drawable.superid_logo),
                 contentDescription = "Logo SuperID",
                 modifier = Modifier
-                    .height(48.dp)
-                    .width(48.dp)
+                    .height(100.dp)
+                    .width(100.dp)
             )
         }
         Text(

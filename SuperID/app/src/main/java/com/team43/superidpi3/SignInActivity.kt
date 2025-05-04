@@ -134,7 +134,7 @@ fun Auth() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 32.dp, bottom = 8.dp),
-            verticalAlignment = Alignment.Top
+            verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
                 onClick = {
@@ -160,8 +160,8 @@ fun Auth() {
                 painter = painterResource(id = R.drawable.superid_logo),
                 contentDescription = "Logo SuperID",
                 modifier = Modifier
-                    .height(48.dp)
-                    .width(48.dp)
+                    .height(100.dp)
+                    .width(100.dp)
             )
         }
         Text(
@@ -178,8 +178,9 @@ fun Auth() {
             fontSize = 14.sp,
             modifier = Modifier.padding(bottom = 4.dp)
         )
-        androidx.compose.material3.TextField(
+        TextField(
             value = email,
+            placeholder = { Text("example@superid.com", color = SuperIDTextWhite.copy(alpha = 0.7f)) },
             onValueChange = { email = it },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
@@ -206,9 +207,10 @@ fun Auth() {
             fontSize = 14.sp,
             modifier = Modifier.padding(bottom = 4.dp)
         )
-        androidx.compose.material3.TextField(
+        TextField(
             value = senha,
             onValueChange = { senha = it },
+            placeholder = { Text("Digite sua senha", color = SuperIDTextWhite.copy(alpha = 0.7f)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             leadingIcon = {
