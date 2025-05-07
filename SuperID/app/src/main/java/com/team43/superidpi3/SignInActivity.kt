@@ -88,10 +88,11 @@ fun login(ctx: Context, email: String, senha: String) {
                 
                 val errorCode = (task.exception as? com.google.firebase.auth.FirebaseAuthException)?.errorCode
                 Log.e(TAG, "Código de erro: $errorCode")
-
+                //tramento de erros
                 when (errorCode) {
-                    "ERROR_USER_DOES_NOT_EXIST" -> {
-                        Toast.makeText(ctx, "Email não encontrado no sistema", Toast.LENGTH_LONG).show()
+                    //Aparentemente por segurança há vezes que o auth retorna invalid credential sem revelar qual info esta errada
+                    "ERROR_INVALID_CREDENTIAL" -> {
+                        Toast.makeText(ctx, "Email ou senha incorretos", Toast.LENGTH_LONG).show()
                     }
                     "ERROR_INVALID_PASSWORD" -> {
                         Toast.makeText(ctx, "Senha incorreta", Toast.LENGTH_LONG).show()
@@ -216,6 +217,8 @@ fun Auth() {
             leadingIcon = {
                 Icon(Icons.Filled.Lock, contentDescription = null, tint = SuperIDTextWhite.copy(alpha = 0.7f))
             },
+
+
             trailingIcon = {
                 val image = if (senhaVisivel) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
                 val description = if (senhaVisivel) "Ocultar senha" else "Mostrar senha"
@@ -236,6 +239,7 @@ fun Auth() {
                 unfocusedLabelColor = SuperIDTextWhite
             )
         )
+
         Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),

@@ -59,6 +59,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 
@@ -127,8 +128,29 @@ fun registrar(ctx: Context, nome: String, email: String, senha: String) {
                 val imei = obterIMEI(ctx)
                 salvarUsuario(nome, email, usuario.uid, imei, false)
             } else {
-                Log.e(TAG, "Não foi possível criar usuário", task.exception)
-                Toast.makeText(ctx, "Erro ao criar conta: ${task.exception?.localizedMessage}", Toast.LENGTH_LONG).show()
+                val errorCode = (task.exception as? com.google.firebase.auth.FirebaseAuthException)?.errorCode
+                Log.e(TAG, "Código de erro: $errorCode")
+                //tramento de erros
+                when (errorCode) {
+                    "ERROR_WEAK_PASSWORD" -> {
+                        Toast.makeText(ctx, "Erro: senha fraca. A senha deve conter pelo menos 6 caracteres", Toast.LENGTH_LONG).show()
+                    }
+
+                    "ERROR_INVALID_EMAIL" -> {
+                        Toast.makeText(ctx, "Formato de email inválido", Toast.LENGTH_LONG).show()
+                    }
+                    "ERROR_NETWORK_REQUEST_FAILED" -> {
+                        Toast.makeText(ctx, "Erro de conexão. Verifique sua internet", Toast.LENGTH_LONG).show()
+                    }
+                    "ERROR_USER_DISABLED" -> {
+                        Toast.makeText(ctx, "Conta desativada. Entre em contato com o suporte", Toast.LENGTH_LONG).show()
+                    }
+                    else -> {
+
+                        Log.e(TAG, "Não foi possível criar usuário", task.exception)
+                        Toast.makeText(ctx, "Erro ao criar conta: ${task.exception?.localizedMessage}", Toast.LENGTH_LONG).show()
+                    }
+                }
             }
         }
 }
@@ -349,6 +371,7 @@ fun CadastroUsuario() {
             fontSize = 14.sp,
             modifier = Modifier.padding(bottom = 4.dp)
         )
+
         TextField(
             value = senha,
             onValueChange = { senha = it },
