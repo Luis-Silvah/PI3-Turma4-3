@@ -12,6 +12,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.team43.superidpi3.navigation.Routes
 import kotlinx.coroutines.delay
 
@@ -19,8 +21,21 @@ import kotlinx.coroutines.delay
 fun SplashScreen(navController: NavHostController) {
     LaunchedEffect(true) {
         delay(2000) // Aguarda 2 segundos
-        navController.navigate(Routes.Welcome) {
-            popUpTo(Routes.Splash) { inclusive = true }
+//        navController.navigate(Routes.Welcome) {
+//            popUpTo(Routes.Splash) { inclusive = true }
+//        }
+
+        val user = Firebase.auth.currentUser
+        if (user != null) {
+            // Usuário está logado
+            navController.navigate(Routes.home(user.uid)) {
+                popUpTo(Routes.Splash) { inclusive = true }
+            }
+        } else {
+            // Usuário não logado
+            navController.navigate(Routes.Welcome) {
+                popUpTo(Routes.Splash) { inclusive = true }
+            }
         }
     }
 
