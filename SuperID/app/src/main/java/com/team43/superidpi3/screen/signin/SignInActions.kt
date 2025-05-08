@@ -19,7 +19,10 @@ class SignInActions(private val ctx: Context, private val navController: NavCont
                 if (task.isSuccessful) {
                     val usuario = auth.currentUser
                     Log.d(TAG, "Permissão para login, ${usuario!!.uid}")
-                    navController.navigate(Routes.home(usuario!!.uid))
+                    navController.navigate(Routes.home(usuario!!.uid)) {
+                        popUpTo(Routes.Welcome) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 } else {
                     // Log do erro completo para debug
                     Log.e(TAG, "Erro de login: ${task.exception?.javaClass?.simpleName}", task.exception)

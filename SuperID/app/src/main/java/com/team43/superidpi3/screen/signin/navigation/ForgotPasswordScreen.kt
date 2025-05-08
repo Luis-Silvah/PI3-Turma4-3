@@ -1,5 +1,6 @@
 package com.team43.superidpi3.screen.signin.navigation
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,7 +34,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.team43.superidpi3.components.BtnPrimary
 import com.team43.superidpi3.components.Header
+import com.team43.superidpi3.components.InputField
 import com.team43.superidpi3.navigation.Routes
 import com.team43.superidpi3.ui.theme.SuperIDBackground
 import com.team43.superidpi3.ui.theme.SuperIDButtonBlue
@@ -86,55 +89,37 @@ fun ForgotPasswordScreen(navController: NavController) {
                 fontSize = 11.sp
 
             )
-
         }
 
         // Email
-        Text(
-            text = "Email",
-            color = SuperIDTextWhite,
-            fontSize = 14.sp,
-            modifier = Modifier.padding(bottom = 4.dp)
-        )
-        TextField(
+        InputField(
+            label = "Email",
             value = email,
-            placeholder = { Text("example@superid.com", color = SuperIDTextWhite.copy(alpha = 0.7f)) },
             onValueChange = { email = it },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            leadingIcon = {
-                Icon(Icons.Filled.Email, contentDescription = null, tint = SuperIDTextWhite.copy(alpha = 0.7f))
-            },
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = SuperIDBackground,
-                unfocusedContainerColor = SuperIDBackground,
-                focusedIndicatorColor = SuperIDButtonBlue,
-                unfocusedIndicatorColor = SuperIDTextWhite.copy(alpha = 0.2f),
-                focusedTextColor = SuperIDTextWhite,
-                unfocusedTextColor = SuperIDTextWhite,
-                cursorColor = SuperIDTextWhite,
-                focusedLabelColor = SuperIDTextWhite,
-                unfocusedLabelColor = SuperIDTextWhite
-            )
+            placeholder = "example@superid.com",
+            leadingIcon = Icons.Filled.Email
         )
         Spacer(modifier = Modifier.height(24.dp))
-        Button(
-            onClick = {
-                ForgotPasswordActions.recuperarSenha(email, {navController.navigate(Routes.SignIn)})
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(54.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = SuperIDButtonBlue,
-                disabledContainerColor = SuperIDButtonBlue.copy(alpha = 0.3f),
-                contentColor = SuperIDTextWhite,
-                disabledContentColor = SuperIDTextWhite.copy(alpha = 0.5f)
-            ),
-            shape = MaterialTheme.shapes.medium,
-            enabled = email.isNotBlank()
-        ) {
-            Text(text = "Enviar Email", color = SuperIDTextWhite, fontSize = 18.sp)
-        }
+        BtnPrimary("Enviar Email", 54.dp,email.isNotBlank(), {
+            ForgotPasswordActions.recuperarSenha(email, {navController.navigate(Routes.SignIn)})
+        })
+//        Button(
+//            onClick = {
+//                ForgotPasswordActions.recuperarSenha(email, {navController.navigate(Routes.SignIn)})
+//            },
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(54.dp),
+//            colors = ButtonDefaults.buttonColors(
+//                containerColor = SuperIDButtonBlue,
+//                disabledContainerColor = SuperIDButtonBlue.copy(alpha = 0.3f),
+//                contentColor = SuperIDTextWhite,
+//                disabledContentColor = SuperIDTextWhite.copy(alpha = 0.5f)
+//            ),
+//            shape = MaterialTheme.shapes.medium,
+//            enabled = email.isNotBlank()
+//        ) {
+//            Text(text = "Enviar Email", color = SuperIDTextWhite, fontSize = 18.sp)
+//        }
     }
 }

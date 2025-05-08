@@ -17,8 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.team43.superidpi3.components.BtnPrimary
 import com.team43.superidpi3.utils.VerificarEmail
-
 
 @Composable
 fun HomeScreen(idUsuario: String, navController: NavController) {
@@ -39,28 +39,36 @@ fun HomeScreen(idUsuario: String, navController: NavController) {
         usuarioState.value?.let { usuario ->
             Text("Nome: ${usuario["nome"] ?: "Não informado"}")
             Text("Email: ${usuario["email"] ?: "Não informado"}")
+            Text(text = "UID: $idUsuario")
+
+
+
+//            if (usuario["emailVerificado"]) {
+//                Button(
+//                    onClick = {
+//                        VerificarEmail(ctx).verifica { emailVerificado ->
+//                            if (emailVerificado) {
+//                                Toast.makeText(ctx, "Email verificado com sucesso!", Toast.LENGTH_SHORT).show()
+//                            } else {
+//                                Toast.makeText(ctx, "Seu email ainda não foi verificado.", Toast.LENGTH_SHORT).show()
+//                            }
+//                        }
+//                    },
+//                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2C3E94)),
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(top = 24.dp)
+//                        .height(50.dp)
+//                ) {
+//                    Text(text = "Já verifiquei o email")
+//                }
+//            }
         }
 
-        Text(text = "UID: $idUsuario")
+        BtnPrimary("Sair", 54.dp, true, {HomeActions.logout()})
 
-        Button(
-            onClick = {
-                VerificarEmail(ctx).verifica { emailVerificado ->
-                    if (emailVerificado) {
-                        Toast.makeText(ctx, "Email verificado com sucesso!", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(ctx, "Seu email ainda não foi verificado.", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2C3E94)),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 24.dp)
-                .height(50.dp)
-        ) {
-            Text(text = "Já verifiquei o email")
-        }
+
     }
+
 
 }
