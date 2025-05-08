@@ -41,8 +41,18 @@ class SignUpActions(private val ctx: Context, private val navController: NavCont
                     navController.navigate(Routes.home(usuario.uid))
 
                 } else {
-                    Log.e(TAG, "Não foi possível criar usuário", task.exception)
-                    Toast.makeText(ctx, "Erro ao criar conta: ${task.exception?.localizedMessage}", Toast.LENGTH_LONG).show()
+                    val errorCode = (task.exception as? com.google.firebase.auth.FirebaseAuthException)?.errorCode
+                    Log.e(TAG, "Código de erro: $errorCode")
+                    //tramento de erros
+                    val toast = when (errorCode) {
+                        "ERROR_WEAK_PASSWORD" -> "Erro: senha fraca. A senha deve conter pelo menos 6 caracteres"
+                        "ERROR_INVALID_EMAIL" -> "Formato de email inválido"
+                        "ERROR_NETWORK_REQUEST_FAILED" -> "Erro de conexão. Verifique sua internet"
+                        "ERROR_USER_DISABLED" -> "Conta desativada. Entre em contato com o suporte"
+                        else -> "Não foi possível criar usuário"
+                    }
+                    Toast.makeText(ctx, toast, Toast.LENGTH_LONG).show()
+                    Log.e(TAG, "Erro ao criar conta: ${task.exception?.localizedMessage}")
                 }
             }
     }

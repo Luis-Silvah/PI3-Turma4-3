@@ -28,35 +28,18 @@ class SignInActions(private val ctx: Context, private val navController: NavCont
                     val errorCode = (task.exception as? FirebaseAuthException)?.errorCode
                     Log.e(TAG, "Código de erro: $errorCode")
 
-                    when (errorCode) {
-                        "ERROR_USER_DOES_NOT_EXIST" -> {
-                            Toast.makeText(ctx, "Email não encontrado no sistema", Toast.LENGTH_LONG).show()
-                        }
-
-                        "ERROR_INVALID_PASSWORD" -> {
-                            Toast.makeText(ctx, "Senha incorreta", Toast.LENGTH_LONG).show()
-                        }
-
-                        "ERROR_INVALID_EMAIL" -> {
-                            Toast.makeText(ctx, "Formato de email inválido", Toast.LENGTH_LONG).show()
-                        }
-
-                        "ERROR_NETWORK_REQUEST_FAILED" -> {
-                            Toast.makeText(ctx, "Erro de conexão. Verifique sua internet", Toast.LENGTH_LONG).show()
-                        }
-
-                        "ERROR_USER_DISABLED" -> {
-                            Toast.makeText(ctx, "Conta desativada. Entre em contato com o suporte", Toast.LENGTH_LONG)
-                                .show()
-                        }
-
-                        else -> {
-                            // Se não for nenhum dos erros conhecidos, mostra a mensagem genérica
-                            Log.e(TAG, "Erro não tratado: $errorCode")
-                            Toast.makeText(ctx, "Erro ao fazer login. Tente novamente mais tarde", Toast.LENGTH_LONG)
-                                .show()
-                        }
+                    //tramento de erros
+                    val toast = when (errorCode) {
+                        "ERROR_INVALID_CREDENTIAL" -> "Email ou senha incorretos"
+                        "ERROR_USER_DOES_NOT_EXIST" -> "Email não encontrado no sistema"
+                        "ERROR_INVALID_PASSWORD" -> "Senha incorreta"
+                        "ERROR_INVALID_EMAIL" -> "Formato de email inválido"
+                        "ERROR_NETWORK_REQUEST_FAILED" -> "Erro de conexão. Verifique sua internet"
+                        "ERROR_USER_DISABLED" -> "Conta desativada. Entre em contato com o suporte"
+                        else -> "Erro ao fazer login. Tente novamente mais tarde"
                     }
+                    Toast.makeText(ctx, toast, Toast.LENGTH_LONG).show()
+                    Log.e(TAG, "Erro de login: $errorCode")
                 }
             }
     }
