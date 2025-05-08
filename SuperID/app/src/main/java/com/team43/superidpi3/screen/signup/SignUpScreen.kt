@@ -1,14 +1,8 @@
-package com.team43.superidpi3
+package com.team43.superidpi3.screen.signup
 
-
-import android.content.Context
-import android.content.Intent
-import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,19 +10,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -40,137 +35,79 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import androidx.navigation.NavController
+import com.team43.superidpi3.components.Header
+import com.team43.superidpi3.components.TermosDialog
+import com.team43.superidpi3.navigation.Routes
 import com.team43.superidpi3.ui.theme.SuperIDBackground
 import com.team43.superidpi3.ui.theme.SuperIDButtonBlue
 import com.team43.superidpi3.ui.theme.SuperIDTextWhite
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.ui.tooling.preview.Preview
 
-class SignInActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            Auth()
-        }
-    }
-}
 
-fun login(ctx: Context, email: String, senha: String) {
-    var auth = Firebase.auth
-    val TAG = "FIREBASE-AUTH"
-
-    auth.signInWithEmailAndPassword(email, senha)
-        .addOnCompleteListener { task ->
-            if(task.isSuccessful){
-                val usuario = auth.currentUser
-                Log.d(TAG, "Permissão para login, ${usuario!!.uid}")
-                val intent = Intent(ctx, WelcomeActivity::class.java)
-                intent.putExtra("uid", usuario!!.uid)
-                ctx.startActivity(intent)
-            } else {
-                // Log do erro completo para debug
-                Log.e(TAG, "Erro de login: ${task.exception?.javaClass?.simpleName}", task.exception)
-                Log.e(TAG, "Mensagem de erro: ${task.exception?.message}")
-                
-                val errorCode = (task.exception as? com.google.firebase.auth.FirebaseAuthException)?.errorCode
-                Log.e(TAG, "Código de erro: $errorCode")
-
-                when (errorCode) {
-                    "ERROR_USER_DOES_NOT_EXIST" -> {
-                        Toast.makeText(ctx, "Email não encontrado no sistema", Toast.LENGTH_LONG).show()
-                    }
-                    "ERROR_INVALID_PASSWORD" -> {
-                        Toast.makeText(ctx, "Senha incorreta", Toast.LENGTH_LONG).show()
-                    }
-                    "ERROR_INVALID_EMAIL" -> {
-                        Toast.makeText(ctx, "Formato de email inválido", Toast.LENGTH_LONG).show()
-                    }
-                    "ERROR_NETWORK_REQUEST_FAILED" -> {
-                        Toast.makeText(ctx, "Erro de conexão. Verifique sua internet", Toast.LENGTH_LONG).show()
-                    }
-                    "ERROR_USER_DISABLED" -> {
-                        Toast.makeText(ctx, "Conta desativada. Entre em contato com o suporte", Toast.LENGTH_LONG).show()
-                    }
-                    else -> {
-                        // Se não for nenhum dos erros conhecidos, mostra a mensagem genérica
-                        Log.e(TAG, "Erro não tratado: $errorCode")
-                        Toast.makeText(ctx, "Erro ao fazer login. Tente novamente mais tarde", Toast.LENGTH_LONG).show()
-                    }
-                }
-            }
-        }
-}
-
-@Preview(showBackground = true)
 @Composable
-fun Auth() {
+fun SignUpScreen(navController: NavController) {
     val ctx = LocalContext.current
+    val SignUpActions = remember { SignUpActions(ctx, navController) }
+
+    var nome by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
+    var termosAceitos by remember { mutableStateOf(false) }
+    var showTermsDialog by remember { mutableStateOf(false) }
     var senhaVisivel by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(SuperIDBackground)
-            .padding(horizontal = 24.dp),
+            .padding(horizontal = 24.dp, vertical = 0.dp),
         horizontalAlignment = Alignment.Start
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 32.dp, bottom = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(
-                onClick = {
-                    val intent = Intent(ctx, MainActivity::class.java)
-                    ctx.startActivity(intent)
-                },
-                modifier = Modifier
-                    .size(56.dp)
-                    .background(
-                        color = SuperIDTextWhite.copy(alpha = 0.05f),
-                        shape = CircleShape
-                    )
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Voltar",
-                    tint = SuperIDTextWhite,
-                    modifier = Modifier.size(28.dp)
-                )
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            Image(
-                painter = painterResource(id = R.drawable.superid_logo),
-                contentDescription = "Logo SuperID",
-                modifier = Modifier
-                    .height(100.dp)
-                    .width(100.dp)
-            )
-        }
+        Header({ navController.navigate(Routes.SignIn) })
         Text(
-            text = "Login",
+            text = "Cadastrar Conta",
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
             color = SuperIDTextWhite,
             modifier = Modifier.padding(bottom = 32.dp)
         )
+        // Nome
+        Text(
+            text = "Nome",
+            color = SuperIDTextWhite,
+            fontSize = 14.sp,
+            modifier = Modifier.padding(bottom = 4.dp)
+        )
+        TextField(
+            value = nome,
+            onValueChange = { nome = it },
+            placeholder = { Text("Digite seu nome", color = SuperIDTextWhite.copy(alpha = 0.7f)) },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            colors = TextFieldDefaults.colors(
+                focusedContainerColor = SuperIDBackground,
+                unfocusedContainerColor = SuperIDBackground,
+                focusedIndicatorColor = SuperIDButtonBlue,
+                unfocusedIndicatorColor = SuperIDTextWhite.copy(alpha = 0.2f),
+                focusedTextColor = SuperIDTextWhite,
+                unfocusedTextColor = SuperIDTextWhite,
+                cursorColor = SuperIDTextWhite,
+                focusedLabelColor = SuperIDTextWhite,
+                unfocusedLabelColor = SuperIDTextWhite
+            )
+        )
+        Spacer(modifier = Modifier.height(18.dp))
         // Email
         Text(
             text = "Email",
@@ -180,8 +117,8 @@ fun Auth() {
         )
         TextField(
             value = email,
-            placeholder = { Text("example@superid.com", color = SuperIDTextWhite.copy(alpha = 0.7f)) },
             onValueChange = { email = it },
+            placeholder = { Text("example@superid.com", color = SuperIDTextWhite.copy(alpha = 0.7f)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             leadingIcon = {
@@ -236,52 +173,84 @@ fun Auth() {
                 unfocusedLabelColor = SuperIDTextWhite
             )
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(18.dp))
+        // Checkbox e termos com links
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(bottom = 8.dp)
         ) {
+            Checkbox(
+                checked = termosAceitos,
+                onCheckedChange = { termosAceitos = it },
+                colors = CheckboxDefaults.colors(
+                    checkedColor = SuperIDButtonBlue,
+                    uncheckedColor = SuperIDTextWhite,
+                    checkmarkColor = SuperIDTextWhite
+                )
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            val annotatedString = buildAnnotatedString {
+                withStyle(SpanStyle(color = SuperIDTextWhite)) {
+                    append("Você aceita os ")
+                }
+                pushStringAnnotation(tag = "termos", annotation = "termos")
+                withStyle(SpanStyle(color = SuperIDButtonBlue, textDecoration = TextDecoration.Underline, fontWeight = FontWeight.Medium)) {
+                    append("Termos de uso e reconhece a declaração de privacidade e política de cookies")
+                }
+                pop()
+            }
             ClickableText(
-                text = AnnotatedString("Esqueceu sua Senha?"),
-                style = TextStyle(color = SuperIDButtonBlue, fontSize = 14.sp, textDecoration = TextDecoration.Underline),
-                onClick = {
-                    val intent = Intent(ctx, ForgotPasswordActivity::class.java)
-                    ctx.startActivity(intent)
+                text = annotatedString,
+                style = TextStyle(fontSize = 12.sp),
+                onClick = { offset ->
+                    annotatedString.getStringAnnotations(tag = "termos", start = offset, end = offset)
+                        .firstOrNull()?.let {
+                            showTermsDialog = true
+                        }
                 }
             )
         }
+        if (showTermsDialog) {
+            TermosDialog(
+                show = showTermsDialog,
+                onDismiss = { showTermsDialog = false }
+            )
+        }
         Spacer(modifier = Modifier.height(18.dp))
+        // Botão
         Button(
             onClick = {
-                login(ctx, email, senha)
+                if (nome.isNotBlank() && email.isNotBlank() && senha.isNotBlank() && termosAceitos) {
+                    SignUpActions.registrar(nome, email, senha)
+                } else {
+                    Toast.makeText(ctx, "Preencha todos os campos e aceite os termos", Toast.LENGTH_SHORT).show()
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(54.dp),
-            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+            colors = ButtonDefaults.buttonColors(
                 containerColor = SuperIDButtonBlue,
                 disabledContainerColor = SuperIDButtonBlue.copy(alpha = 0.3f),
                 contentColor = SuperIDTextWhite,
                 disabledContentColor = SuperIDTextWhite.copy(alpha = 0.5f)
             ),
-            shape = androidx.compose.material3.MaterialTheme.shapes.medium,
-            enabled = email.isNotBlank() && senha.isNotBlank()
+            shape = MaterialTheme.shapes.medium,
+            enabled = termosAceitos
         ) {
-            Text(text = "Entrar", color = SuperIDTextWhite, fontSize = 18.sp)
+            Text(text = "Criar conta", color = SuperIDTextWhite, fontSize = 18.sp)
         }
         Spacer(modifier = Modifier.height(24.dp))
+        // Link para login
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            Text(text = "Ainda não tem conta? ", color = SuperIDTextWhite, fontSize = 14.sp)
+            Text(text = "Já tem uma conta? ", color = SuperIDTextWhite, fontSize = 14.sp)
             ClickableText(
-                text = AnnotatedString("Registre-se agora"),
-                style = TextStyle(color = SuperIDButtonBlue, fontSize = 14.sp, textDecoration = TextDecoration.Underline),
-                onClick = {
-                    val intent = Intent(ctx, SignUpActivity::class.java)
-                    ctx.startActivity(intent)
-                }
+                text = AnnotatedString("Entrar"),
+                onClick = { navController.navigate(Routes.SignIn) },
+                style = TextStyle(color = SuperIDButtonBlue, textDecoration = TextDecoration.Underline, fontSize = 14.sp)
             )
         }
     }
