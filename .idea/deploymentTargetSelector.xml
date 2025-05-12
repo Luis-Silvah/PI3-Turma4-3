@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="SuperIDPI3.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-05-10T22:28:43.289303Z">
+        <DropdownSelection timestamp="2025-05-10T22:37:39.250773300Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\pedro\.android\avd\Medium_Phone.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=RQCXA060DLK" />
             </handle>
           </Target>
         </DropdownSelection>
