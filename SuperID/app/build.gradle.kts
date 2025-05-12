@@ -62,6 +62,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("androidx.compose.foundation:foundation:1.5.4")
     implementation("androidx.compose.material3:material3:1.2.0")
+    implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.compose.ui:ui-text:1.5.4")
     implementation("androidx.compose.material:material-icons-extended:1.5.4")
     implementation("androidx.navigation:navigation-compose:2.7.7")

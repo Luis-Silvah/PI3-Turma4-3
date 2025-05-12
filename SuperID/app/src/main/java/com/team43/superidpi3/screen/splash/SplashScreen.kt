@@ -15,6 +15,8 @@ import androidx.navigation.NavHostController
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.team43.superidpi3.navigation.Routes
+import com.team43.superidpi3.ui.theme.SuperIDBackground
+import com.team43.superidpi3.ui.theme.SuperIDTextWhite
 import kotlinx.coroutines.delay
 
 @Composable
@@ -42,9 +44,9 @@ fun SplashScreen(navController: NavHostController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White),
+            .background(SuperIDBackground),
         contentAlignment = Alignment.Center
     ) {
-        Text("SuperId", fontSize = 32.sp, fontWeight = FontWeight.Bold)
+        Text("SuperId", fontSize = 32.sp, fontWeight = FontWeight.Bold, color = SuperIDTextWhite)
     }
 }

@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -34,7 +35,8 @@ fun InputField(
     placeholder: String,
     leadingIcon: ImageVector? = null,
     isPassword: Boolean = false,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    validatorLabel: String = ""
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
 
@@ -43,8 +45,9 @@ fun InputField(
             text = label,
             color = SuperIDTextWhite,
             fontSize = 14.sp,
-            modifier = Modifier.padding(bottom = 4.dp)
+            modifier = Modifier.padding(bottom = 4.dp),
         )
+
         TextField(
             value = value,
             onValueChange = onValueChange,
@@ -89,7 +92,16 @@ fun InputField(
                 cursorColor = SuperIDTextWhite,
                 focusedLabelColor = SuperIDTextWhite,
                 unfocusedLabelColor = SuperIDTextWhite
-            )
+            ),
         )
+
+        if(!validatorLabel.isEmpty()) {
+            Text(
+                text = validatorLabel,
+                color = Color.Red,
+                fontSize = 14.sp,
+                modifier = Modifier.padding(bottom = 4.dp),
+            )
+        }
     }
 }
