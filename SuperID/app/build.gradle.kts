@@ -68,5 +68,5 @@ dependencies {
     implementation("androidx.compose.ui:ui-text:1.5.4")
     implementation("androidx.compose.material:material-icons-extended:1.5.4")
     implementation("androidx.navigation:navigation-compose:2.7.7")
-    implementation("com.google.accompanist:accompanist-permissions:latest_version")
+    implementation("com.google.accompanist:accompanist-permissions:0.37.3")
 }
