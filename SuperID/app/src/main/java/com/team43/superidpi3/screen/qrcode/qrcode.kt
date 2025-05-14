@@ -6,6 +6,7 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.Image
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -50,6 +51,55 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.team43.superidpi3.ui.theme.SuperIDPI3Theme
 import java.io.File
+import androidx.camera.core.ImageAnalysis
+import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.common.InputImage
+import androidx.camera.core.ImageProxy
+import androidx.compose.ui.unit.dp
+import androidx.camera.core.ExperimentalGetImage
+
+
+// Marque a função como opt-in para usar a API experimental
+class QrCodeAnalyzer(
+    private val onQrCodeScanned: (String) -> Unit
+) : ImageAnalysis.Analyzer {
+
+    private val scanner = BarcodeScanning.getClient()
+
+    // Marque a função analyze com @OptIn
+    @androidx.annotation.OptIn(ExperimentalGetImage::class)
+    @OptIn(ExperimentalGetImage::class)  // Marca a função como opt-in para o uso experimental da CameraX
+    override fun analyze(imageProxy: ImageProxy) {
+        // Acesso à imagem
+        val mediaImage = imageProxy.image ?: run {
+            imageProxy.close()  // Fecha o ImageProxy se não houver imagem
+            return
+        }
+
+        // Cria o InputImage a partir da imagem da câmera
+        val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
+
+        // Processa a imagem para tentar identificar códigos de barras ou QR codes
+        scanner.process(image)
+            .addOnSuccessListener { barcodes ->
+                // Se um código de barras for detectado
+                for (barcode in barcodes) {
+                    barcode.rawValue?.let {
+                        // Envia o valor do QR code encontrado
+                        onQrCodeScanned(it)
+                    }
+                }
+            }
+            .addOnFailureListener {
+                // Caso haja falha no processamento
+            }
+            .addOnCompleteListener {
+                // Fecha o ImageProxy para liberar recursos
+                imageProxy.close()
+            }
+    }
+}
+
 
 
 
@@ -118,68 +168,54 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun CameraAppScreen(navController: NavHostController) {
-    var lensFacing by remember { mutableIntStateOf(CameraSelector.LENS_FACING_FRONT) }
+    var lensFacing by remember { mutableIntStateOf(CameraSelector.LENS_FACING_BACK) }
     var zoomLevel by remember { mutableFloatStateOf(0.0f) }
-    val imageCaptureUseCase = remember { ImageCapture.Builder().build() }
-
     val localContext = LocalContext.current
+    var qrCodeResult by remember { mutableStateOf<String?>(null) }
 
     Box {
         CameraPreview(
             lensFacing = lensFacing,
             zoomLevel = zoomLevel,
-            imageCaptureUseCase = imageCaptureUseCase
+            onQrCodeScanned = { result ->
+                qrCodeResult = result
+            }
         )
+
 
         Column(modifier = Modifier.align(Alignment.BottomCenter)) {
             Row {
-                Button(onClick = { lensFacing = CameraSelector.LENS_FACING_FRONT }) {
-                    Text("Front camera")
-                }
                 Button(onClick = { lensFacing = CameraSelector.LENS_FACING_BACK }) {
                     Text("Back camera")
                 }
             }
+        }
 
-            Row {
-                Button(onClick = { zoomLevel = 0.0f }) {
-                    Text("Zoom 0.0")
-                }
-                Button(onClick = { zoomLevel = 0.5f }) {
-                    Text("Zoom 0.5")
-                }
-                Button(onClick = { zoomLevel = 1.0f }) {
-                    Text("Zoom 1.0")
-                }
-            }
-
-            Button(onClick = {
-                val outputFileOptions = ImageCapture.OutputFileOptions.Builder(File(localContext.externalCacheDir, "image.jpg"))
-                    .build()
-                val callback = object: ImageCapture.OnImageSavedCallback {
-                    override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                        outputFileResults.savedUri?.shareAsImage(localContext)
-                    }
-
-                    override fun onError(exception: ImageCaptureException) {
-                    }
-                }
-                imageCaptureUseCase.takePicture(outputFileOptions, ContextCompat.getMainExecutor(localContext), callback)
-            }) {
-                Text("Take Photo")
-            }
+        qrCodeResult?.let {
+            Text(
+                text = "QR Code: $it",
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(16.dp)
+            )
         }
     }
 }
+
 
 @Composable
 fun CameraPreview(
     modifier: Modifier = Modifier,
     lensFacing: Int,
     zoomLevel: Float,
-    imageCaptureUseCase: ImageCapture
+    onQrCodeScanned: (String) -> Unit
 ) {
     val previewUseCase = remember { androidx.camera.core.Preview.Builder().build() }
+    val analysisUseCase = remember {
+        ImageAnalysis.Builder()
+            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .build()
+    }
 
     var cameraProvider by remember { mutableStateOf<ProcessCameraProvider?>(null) }
     var cameraControl by remember { mutableStateOf<CameraControl?>(null) }
@@ -187,15 +223,16 @@ fun CameraPreview(
     val localContext = LocalContext.current
 
     fun rebindCameraProvider() {
-        cameraProvider?.let { cameraProvider ->
-            val cameraSelector = CameraSelector.Builder()
+        cameraProvider?.let { provider ->
+            val selector = CameraSelector.Builder()
                 .requireLensFacing(lensFacing)
                 .build()
-            cameraProvider.unbindAll()
-            val camera = cameraProvider.bindToLifecycle(
+            provider.unbindAll()
+            val camera = provider.bindToLifecycle(
                 localContext as LifecycleOwner,
-                cameraSelector,
-                previewUseCase, imageCaptureUseCase
+                selector,
+                previewUseCase,
+                analysisUseCase
             )
             cameraControl = camera.cameraControl
         }
@@ -203,6 +240,10 @@ fun CameraPreview(
 
     LaunchedEffect(Unit) {
         cameraProvider = ProcessCameraProvider.awaitInstance(localContext)
+        analysisUseCase.setAnalyzer(
+            ContextCompat.getMainExecutor(localContext),
+            QrCodeAnalyzer(onQrCodeScanned)
+        )
         rebindCameraProvider()
     }
 
@@ -219,11 +260,11 @@ fun CameraPreview(
         factory = { context ->
             PreviewView(context).also {
                 previewUseCase.surfaceProvider = it.surfaceProvider
-                rebindCameraProvider()
             }
         }
     )
 }
+
 
 @Preview(showBackground = true)
 @Composable
