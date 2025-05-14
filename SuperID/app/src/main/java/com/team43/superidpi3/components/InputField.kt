@@ -1,7 +1,9 @@
 package com.team43.superidpi3.components
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -64,7 +66,7 @@ fun InputField(
                     Icon(
                         imageVector = it,
                         contentDescription = null,
-                        tint = SuperIDTextWhite.copy(alpha = 0.7f)
+                        tint = if(!validatorLabel.isEmpty()) Color.Red else SuperIDTextWhite.copy(alpha = 0.7f)
                     )
                 }
             },
@@ -76,7 +78,7 @@ fun InputField(
                         Icon(
                             imageVector = image,
                             contentDescription = description,
-                            tint = SuperIDTextWhite.copy(alpha = 0.7f)
+                            tint = if(!validatorLabel.isEmpty()) Color.Red else SuperIDTextWhite.copy(alpha = 0.7f)
                         )
                     }
                 }
@@ -85,7 +87,7 @@ fun InputField(
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = SuperIDBackground,
                 unfocusedContainerColor = SuperIDBackground,
-                focusedIndicatorColor = SuperIDButtonBlue,
+                focusedIndicatorColor = if(!validatorLabel.isEmpty()) Color.Red else SuperIDButtonBlue,
                 unfocusedIndicatorColor = SuperIDTextWhite.copy(alpha = 0.2f),
                 focusedTextColor = SuperIDTextWhite,
                 unfocusedTextColor = SuperIDTextWhite,
@@ -94,6 +96,8 @@ fun InputField(
                 unfocusedLabelColor = SuperIDTextWhite
             ),
         )
+
+        Spacer(modifier = Modifier.height(6.dp))
 
         if(!validatorLabel.isEmpty()) {
             Text(

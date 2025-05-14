@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.team43.superidpi3.components.BtnPrimary
 import com.team43.superidpi3.components.Header
@@ -44,6 +45,8 @@ import com.team43.superidpi3.navigation.Routes
 import com.team43.superidpi3.ui.theme.SuperIDBackground
 import com.team43.superidpi3.ui.theme.SuperIDButtonBlue
 import com.team43.superidpi3.ui.theme.SuperIDTextWhite
+import com.team43.superidpi3.utils.EmailViewModel
+import com.team43.superidpi3.utils.SenhaViewModel
 
 
 @Composable
@@ -52,7 +55,8 @@ fun SignUpScreen(navController: NavController) {
     val SignUpActions = remember { SignUpActions(ctx, navController) }
 
     var nome by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
+    val emailViewModel: EmailViewModel = viewModel()
+    val senhaViewModel: SenhaViewModel = viewModel()
     var senha by remember { mutableStateOf("") }
     var termosAceitos by remember { mutableStateOf(false) }
     var showTermsDialog by remember { mutableStateOf(false) }
@@ -84,20 +88,22 @@ fun SignUpScreen(navController: NavController) {
         // Email
         InputField(
             label = "Email",
-            value = email,
-            onValueChange = { email = it },
+            value = emailViewModel.email,
+            onValueChange = { input -> emailViewModel.updateEmail(input) },
             placeholder = "example@superid.com",
-            leadingIcon = Icons.Filled.Email
+            leadingIcon = Icons.Filled.Email,
+            validatorLabel = if(emailViewModel.emailHasErrors) "Formato Email inválido" else "",
         )
         Spacer(modifier = Modifier.height(18.dp))
         // Senha
         InputField(
             label = "Senha",
-            value = senha,
-            onValueChange = { senha = it },
+            value = senhaViewModel.senha,
+            onValueChange = { input -> senhaViewModel.updateSenha(input) },
             placeholder = "Digite sua senha",
             leadingIcon = Icons.Filled.Lock,
-            isPassword = true
+            isPassword = true,
+            validatorLabel = if(senhaViewModel.senhaHasErrors) "Senha deve conter no minimo 6 caracteres" else ""
         )
         Spacer(modifier = Modifier.height(18.dp))
         // Checkbox e termos com links
@@ -151,8 +157,8 @@ fun SignUpScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(18.dp))
         // Botão
         BtnPrimary("Criar conta", 54.dp,termosAceitos, {
-            if (nome.isNotBlank() && email.isNotBlank() && senha.isNotBlank() && termosAceitos) {
-                SignUpActions.registrar(nome, email, senha)
+            if (nome.isNotBlank() && emailViewModel.email.isNotBlank() && senha.isNotBlank() && termosAceitos) {
+                SignUpActions.registrar(nome, emailViewModel.email, senha)
             } else {
                 Toast.makeText(ctx, "Preencha todos os campos e aceite os termos", Toast.LENGTH_SHORT).show()
             }

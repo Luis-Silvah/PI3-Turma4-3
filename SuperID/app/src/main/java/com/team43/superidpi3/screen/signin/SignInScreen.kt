@@ -13,10 +13,8 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,7 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.team43.superidpi3.components.BtnPrimary
@@ -40,52 +37,13 @@ import com.team43.superidpi3.navigation.Routes
 import com.team43.superidpi3.ui.theme.SuperIDBackground
 import com.team43.superidpi3.ui.theme.SuperIDButtonBlue
 import com.team43.superidpi3.ui.theme.SuperIDTextWhite
+import com.team43.superidpi3.utils.EmailViewModel
 
-class EmailViewModel: ViewModel() {
-    var email by mutableStateOf("")
-        private set
-
-    val emailHasErrors by derivedStateOf {
-        if (email.isNotEmpty()) {
-            // Email is considered erroneous until it completely matches EMAIL_ADDRESS.
-            !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
-        } else {
-            false
-        }
-    }
-
-    fun updateEmail(input: String) {
-        email = input
-    }
-}
-
-@Composable
-fun ValidatingInputTextField(
-    email: String,
-    updateState: (String) -> Unit,
-    validatorHasErrors: Boolean
-) {
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(10.dp),
-        value = email,
-        onValueChange = updateState,
-        label = { Text("Email") },
-        isError = validatorHasErrors,
-        supportingText = {
-            if (validatorHasErrors) {
-                Text("Incorrect email format.")
-            }
-        }
-    )
-}
 @Composable
 fun SignInScreen(navController: NavController) {
     val ctx = LocalContext.current
     val SignInActions = remember { SignInActions(ctx, navController) }
 
-//    var email by remember { mutableStateOf("") }
     val emailViewModel: EmailViewModel = viewModel()
     var senha by remember { mutableStateOf("") }
 
