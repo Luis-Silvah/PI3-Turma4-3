@@ -113,11 +113,6 @@ fun SignInScreen(navController: NavController) {
             leadingIcon = Icons.Filled.Email,
             validatorLabel = if(emailViewModel.emailHasErrors) "Formato Email inválido" else "",
         )
-        ValidatingInputTextField(
-            email = emailViewModel.email,
-            updateState = { input -> emailViewModel.updateEmail(input) },
-            validatorHasErrors = emailViewModel.emailHasErrors
-        )
         Spacer(modifier = Modifier.height(18.dp))
         // Senha
         InputField(
