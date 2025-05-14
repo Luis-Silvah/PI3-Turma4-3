@@ -9,6 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.team43.superidpi3.navigation.Routes
+import android.content.Intent
+import androidx.compose.ui.platform.LocalContext
+import com.team43.superidpi3.screen.qrcode.MainActivity
+
 
 @Composable
 fun WelcomeScreen(navController: NavController) {
@@ -17,6 +21,17 @@ fun WelcomeScreen(navController: NavController) {
         Button(onClick = { navController.navigate(Routes.SignUp)}) {
             Text("Cadastrar")
         }
+        val context = LocalContext.current
+
+        Button(onClick = {
+            val intent = Intent(context, MainActivity::class.java)
+            context.startActivity(intent)
+        }) {
+            Text("ler qr code")
+        }
+
+
+
 
         Button(onClick = { navController.navigate(Routes.SignIn)}) {
             Text("Entrar")

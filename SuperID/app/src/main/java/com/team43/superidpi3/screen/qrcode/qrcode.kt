@@ -46,23 +46,12 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toFile
 import androidx.lifecycle.LifecycleOwner
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.team43.superidpi3.components.BtnPrimary
-import com.team43.superidpi3.components.Header
-import com.team43.superidpi3.components.InputField
-import com.team43.superidpi3.navigation.Routes
-import com.team43.superidpi3.ui.theme.SuperIDBackground
-import com.team43.superidpi3.ui.theme.SuperIDButtonBlue
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.team43.superidpi3.ui.theme.SuperIDPI3Theme
-import com.team43.superidpi3.ui.theme.SuperIDTextWhite
 import java.io.File
+
+
 
 @Composable
 fun PermissionRequiredScreen(modifier: Modifier = Modifier, permission: String, onPermissionGranted: () -> Unit) {
@@ -112,13 +101,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            SuperIDPI3Theme {                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                WithPermission(
-                    modifier = Modifier.padding(innerPadding),
-                    permission = Manifest.permission.CAMERA
-
-                ) {
-                        CameraAppScreen()
+            SuperIDPI3Theme {
+                val navController = rememberNavController()
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    WithPermission(
+                        modifier = Modifier.padding(innerPadding),
+                        permission = Manifest.permission.CAMERA
+                    ) {
+                        CameraAppScreen(navController)
                     }
                 }
             }
@@ -127,7 +117,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun CameraAppScreen() {
+fun CameraAppScreen(navController: NavHostController) {
     var lensFacing by remember { mutableIntStateOf(CameraSelector.LENS_FACING_FRONT) }
     var zoomLevel by remember { mutableFloatStateOf(0.0f) }
     val imageCaptureUseCase = remember { ImageCapture.Builder().build() }
@@ -239,7 +229,8 @@ fun CameraPreview(
 @Composable
 fun CameraScreenPreview() {
     SuperIDPI3Theme {
-        CameraAppScreen()
+        val navController = rememberNavController()
+        CameraAppScreen(navController)
     }
 }
 

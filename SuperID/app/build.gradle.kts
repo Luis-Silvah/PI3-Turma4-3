@@ -69,4 +69,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.5.4")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("com.google.accompanist:accompanist-permissions:0.37.3")
+    implementation("com.google.mlkit:barcode-scanning:17.2.0")
+    implementation ("androidx.camera:camera-camera2:1.3.0")
+
 }

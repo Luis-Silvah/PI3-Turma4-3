@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.team43.superidpi3.screen.home.HomeScreen
+import com.team43.superidpi3.screen.qrcode.CameraAppScreen
 import com.team43.superidpi3.screen.signin.SignInScreen
 import com.team43.superidpi3.screen.signin.navigation.ForgotPasswordScreen
 import com.team43.superidpi3.screen.signup.SignUpScreen
@@ -39,6 +40,10 @@ fun AppNavHost(navController: NavHostController) {
         composable(Routes.SignIn) {
             SignInScreen(navController)
         }
+        composable(Routes.qrcode) {
+            CameraAppScreen(navController)
+        }
+
 
         composable(Routes.ForgotPassword) {
             ForgotPasswordScreen(navController)

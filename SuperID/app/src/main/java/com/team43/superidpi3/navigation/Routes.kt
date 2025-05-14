@@ -8,6 +8,6 @@ object Routes {
     const val SignIn = "signin"
     const val ForgotPassword = "forgot-password"
     const val SignUp = "signup"
-
+    const val qrcode = "PermissionRequiredScreen"
     fun home(idUsuario: String) = "home/${idUsuario}"
 }
