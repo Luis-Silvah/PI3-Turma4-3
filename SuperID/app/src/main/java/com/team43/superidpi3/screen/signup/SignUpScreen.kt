@@ -57,7 +57,6 @@ fun SignUpScreen(navController: NavController) {
     var nome by remember { mutableStateOf("") }
     val emailViewModel: EmailViewModel = viewModel()
     val senhaViewModel: SenhaViewModel = viewModel()
-    var senha by remember { mutableStateOf("") }
     var termosAceitos by remember { mutableStateOf(false) }
     var showTermsDialog by remember { mutableStateOf(false) }
 
@@ -157,8 +156,8 @@ fun SignUpScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(18.dp))
         // Botão
         BtnPrimary("Criar conta", 54.dp,termosAceitos, {
-            if (nome.isNotBlank() && emailViewModel.email.isNotBlank() && senha.isNotBlank() && termosAceitos) {
-                SignUpActions.registrar(nome, emailViewModel.email, senha)
+            if (nome.isNotBlank() && emailViewModel.email.isNotBlank() && senhaViewModel.senha.isNotBlank() && termosAceitos) {
+                SignUpActions.registrar(nome, emailViewModel.email, senhaViewModel.senha)
             } else {
                 Toast.makeText(ctx, "Preencha todos os campos e aceite os termos", Toast.LENGTH_SHORT).show()
             }
