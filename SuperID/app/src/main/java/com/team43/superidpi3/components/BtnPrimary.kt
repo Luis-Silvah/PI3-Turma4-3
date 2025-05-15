@@ -22,7 +22,7 @@ fun BtnPrimary(label: String, height: Dp, enabled: Boolean, onClick: () -> Unit)
             .height(height),
         colors = ButtonDefaults.buttonColors(
             containerColor = SuperIDButtonBlue,
-            disabledContainerColor = SuperIDButtonBlue.copy(alpha = 0.3f),
+            disabledContainerColor = SuperIDButtonBlue.copy(alpha = 0.4f),
             contentColor = SuperIDTextWhite,
             disabledContentColor = SuperIDTextWhite.copy(alpha = 0.5f)
         ),

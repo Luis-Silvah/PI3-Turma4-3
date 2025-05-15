@@ -1,4 +1,6 @@
 [versions]
+accompanistPermissions = "0.37.3"
+accompanistPager = "0.34.0"
 agp = "8.9.1"
 kotlin = "2.0.21"
 coreKtx = "1.16.0"
@@ -13,6 +15,9 @@ cameraView = "1.4.2"
 cameraLifecycle = "1.4.2"
 
 [libraries]
+accompanist-permissions = { name="accompanist.permissions", module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
+accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPager" }
+#accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanistPager" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
