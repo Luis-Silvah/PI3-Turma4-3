@@ -10,11 +10,11 @@ object Routes {
     const val SignUp = "signup"
 
     const val Categoria = "categoria/{idUsuario}"
-
+    const val AddSenha = "addSenha/{idUsuario}"
     const val Qrcode = "qrcode"
     const val Profile = "profile/{idUsuario}"
-
     fun home(idUsuario: String) = "home/${idUsuario}"
     fun categoria(idUsuario: String) = "categoria/${idUsuario}"
     fun profile(idUsuario: String) = "profile/${idUsuario}"
+    fun addSenha(idUsuario: String) = "addSenha/${idUsuario}"
 }

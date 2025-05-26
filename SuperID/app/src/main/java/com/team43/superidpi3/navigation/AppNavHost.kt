@@ -10,11 +10,14 @@ import com.team43.superidpi3.components.Layout
 import com.team43.superidpi3.screen.categoria.CategoriaScreen
 import com.team43.superidpi3.screen.home.HomeScreen
 import com.team43.superidpi3.screen.profile.ProfileScreen
+import com.team43.superidpi3.screen.senha.AddSenhaScreen
+import com.team43.superidpi3.screen.senha.AddSenhaScreen
 import com.team43.superidpi3.screen.signin.SignInScreen
 import com.team43.superidpi3.screen.signin.navigation.ForgotPasswordScreen
 import com.team43.superidpi3.screen.signup.SignUpScreen
 import com.team43.superidpi3.screen.splash.SplashScreen
 import com.team43.superidpi3.screen.welcome.WelcomeScreen
+
 
 @Composable
 fun AppNavHost(navController: NavHostController) {
@@ -47,6 +50,15 @@ fun AppNavHost(navController: NavHostController) {
                 CategoriaScreen(navController, padding)
             }
         }
+        composable(
+            route = Routes.AddSenha,
+            arguments = listOf(navArgument("idUsuario") { type = NavType.StringType })
+        ) {
+            val idUsuario = it.arguments?.getString("idUsuario") ?: ""
+            AddSenhaScreen(navController, idUsuario)
+        }
+
+
 
         composable(Routes.SignUp) {
             SignUpScreen(navController)
@@ -59,7 +71,6 @@ fun AppNavHost(navController: NavHostController) {
         composable(Routes.ForgotPassword) {
             ForgotPasswordScreen(navController)
         }
-
         composable(
             route = Routes.Profile,
             arguments = listOf(navArgument("idUsuario") { type = NavType.StringType })
