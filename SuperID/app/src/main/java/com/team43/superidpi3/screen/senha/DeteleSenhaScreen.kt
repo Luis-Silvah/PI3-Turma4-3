@@ -50,7 +50,7 @@ fun DeleteSenhaScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Para confirmar, digite \"confirmar\" abaixo:",
+            text = "Digite \"confirmar\" no campo abaixo para concluir o processo de exclusão:",
             color = SuperIDTextWhite.copy(alpha = 0.8f),
             fontSize = 16.sp
         )
@@ -61,7 +61,7 @@ fun DeleteSenhaScreen(
             label = "",
             value = confirmText,
             onValueChange = { confirmText = it },
-            placeholder = "Digite 'confirmar'",
+            placeholder = "Confirmar",
             modifier = Modifier.fillMaxWidth()
         )
 

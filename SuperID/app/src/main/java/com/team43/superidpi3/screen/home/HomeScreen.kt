@@ -43,6 +43,7 @@ import com.team43.superidpi3.components.BtnPrimary
 import com.team43.superidpi3.components.Layout
 import com.team43.superidpi3.domain.Senha
 import com.team43.superidpi3.navigation.Routes
+import com.team43.superidpi3.screen.categoria.CategoriaActions
 import com.team43.superidpi3.screen.home.components.SenhaCard
 import com.team43.superidpi3.screen.profile.ProfileActions
 import com.team43.superidpi3.screen.senha.SenhaActions
@@ -56,18 +57,28 @@ import com.team43.superidpi3.utils.VerificarEmail
 fun HomeScreen(idUsuario: String, navController: NavController, padding: PaddingValues) {
     val ctx = LocalContext.current
 
+    // Categorias fixas
+    val categoriasFixas = listOf("Redes sociais", "Bancos", "Trabalho")
 
-    val categorias = listOf("Redes sociais", "Bancos", "Jogos", "E-mails", "Outros")
-    var categoriaSelecionada by remember { mutableStateOf(categorias[0]) }
+    val categoriaActions = remember { CategoriaActions() }
+    val categoriasFirebaseState = remember { mutableStateOf(listOf<String>()) }
+
+    LaunchedEffect(idUsuario) {
+        categoriaActions.buscarCategoriasDoUsuario(idUsuario) { lista ->
+            categoriasFirebaseState.value = lista
+        }
+    }
+
+    // Une fixas + Firebase
+    val categorias = categoriasFixas + categoriasFirebaseState.value
+
+    var categoriaSelecionada by remember { mutableStateOf(categorias.firstOrNull() ?: "") }
 
     val usuarioState = remember { mutableStateOf<Map<String, Any>?>(null) }
     val senhasState = remember { mutableStateOf<List<Senha>>(emptyList()) }
 
     val senhaActions = remember { SenhaActions() }
     val profileActions = remember { ProfileActions(ctx, navController) }
-
-    // Busca usuário
-
 
     LaunchedEffect(idUsuario) {
         senhaActions.buscarSenhasDoUsuario(idUsuario) { lista ->
@@ -76,15 +87,12 @@ fun HomeScreen(idUsuario: String, navController: NavController, padding: Padding
         }
     }
 
-
     Layout(
         routeIndex = 0,
         navController = navController,
         title = "",
         idUsuario = idUsuario,
-        onFabClick = {
-            navController.navigate(Routes.addSenha(idUsuario))
-        }
+        showFabSenha = true
     ) { paddingInner ->
 
         Column(
@@ -132,35 +140,17 @@ fun HomeScreen(idUsuario: String, navController: NavController, padding: Padding
                 )
             } else {
                 senhasFiltradas.forEach { senha ->
-                    SenhaCard(title = senha.nome, description = "descrição", password = senha.senha, senhaId = senha.id,
-                        navController = navController)
+                    SenhaCard(
+                        title = senha.nome,
+                        description = "descrição",
+                        password = senha.senha,
+                        senhaId = senha.id,
+                        navController = navController
+                    )
                     Spacer(modifier = Modifier.height(2.dp))
-                }
-            }
-
-            // BOTÃO DE VERIFICAÇÃO
-            Box(modifier = Modifier.padding(16.dp)) {
-                usuarioState.value?.let { usuario ->
-                    BtnPrimary(
-                        if (usuario["emailVerificado"] as Boolean) "Email validado!" else "Verificar se email foi validado",
-                        54.dp,
-                        true
-                    ) {
-                        VerificarEmail(ctx).verifica { emailVerificado ->
-                            if (emailVerificado) {
-                                Toast.makeText(ctx, "Email verificado com sucesso!", Toast.LENGTH_SHORT).show()
-                                if (usuario["emailVerificado"] as? Boolean == false) {
-                                    profileActions.buscaUsuario(idUsuario) { dados ->
-                                        usuarioState.value = dados
-                                    }
-                                }
-                            } else {
-                                Toast.makeText(ctx, "Seu email ainda não foi verificado.", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    }
                 }
             }
         }
     }
 }
+

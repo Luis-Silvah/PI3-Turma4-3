@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.team43.superidpi3.components.Layout
+import com.team43.superidpi3.screen.categoria.AddCategoriaScreen
 import com.team43.superidpi3.screen.categoria.CategoriaScreen
 import com.team43.superidpi3.screen.home.HomeScreen
 import com.team43.superidpi3.screen.profile.ProfileScreen
@@ -48,9 +49,17 @@ fun AppNavHost(navController: NavHostController) {
             arguments = listOf(navArgument("idUsuario") { type = NavType.StringType })
         ) {
             val idUsuario = it.arguments?.getString("idUsuario") ?: ""
-            Layout(2, navController, "Categorias", idUsuario, false) { padding ->
-                CategoriaScreen(navController, padding)
+            Layout(
+                routeIndex = 2,
+                navController = navController,
+                title = "Categorias",
+                idUsuario = idUsuario,
+                showFabSenha = false,
+                showFabCategoria = true
+            ) { padding ->
+                CategoriaScreen(navController, idUsuario, padding)
             }
+
         }
         composable(
             route = Routes.AddSenha,
@@ -63,6 +72,11 @@ fun AppNavHost(navController: NavHostController) {
             val senhaId = backStackEntry.arguments?.getString("senhaId") ?: ""
             DeleteSenhaScreen(navController, padding = PaddingValues(0.dp), senhaId = senhaId)
         }
+        composable(Routes.AddCategoria) { backStackEntry ->
+            val idUsuario = backStackEntry.arguments?.getString("idUsuario") ?: ""
+            AddCategoriaScreen(navController, idUsuario)
+        }
+
 
 
 

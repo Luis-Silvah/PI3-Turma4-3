@@ -14,6 +14,7 @@ import com.team43.superidpi3.components.BtnPrimary
 import com.team43.superidpi3.components.Header
 import com.team43.superidpi3.components.InputField
 import com.team43.superidpi3.navigation.Routes
+import com.team43.superidpi3.screen.categoria.CategoriaActions
 import com.team43.superidpi3.ui.theme.SuperIDTextWhite
 
 fun salvarSenha(
@@ -52,7 +53,20 @@ fun AddSenhaScreen(
     var nome by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
     var categoria by remember { mutableStateOf("") }
-    val categorias = listOf("Redes sociais", "Bancos", "E-mails", "Jogos", "Outros")
+
+    // Categorias padrão
+    val categoriasFixas = listOf("Redes Sociais", "Bancos", "Trabalho")
+
+    val categoriaActions = remember { CategoriaActions() }
+    val categoriasFirebaseState = remember { mutableStateOf(listOf<String>()) }
+
+    LaunchedEffect(idUsuario) {
+        categoriaActions.buscarCategoriasDoUsuario(idUsuario) { lista ->
+            categoriasFirebaseState.value = lista
+        }
+    }
+
+    val categoriasCompletas = categoriasFixas + categoriasFirebaseState.value
 
     var dropdownExpanded by remember { mutableStateOf(false) }
 
@@ -120,7 +134,7 @@ fun AddSenhaScreen(
                 expanded = dropdownExpanded,
                 onDismissRequest = { dropdownExpanded = false }
             ) {
-                categorias.forEach { item ->
+                categoriasCompletas.forEach { item ->
                     DropdownMenuItem(
                         text = { Text(item) },
                         onClick = {
@@ -155,3 +169,6 @@ fun AddSenhaScreen(
         )
     }
 }
+
+
+

@@ -57,8 +57,8 @@ fun Layout(
     idUsuario: String,
     isSearch: Boolean = true,
     isProfile: Boolean = true,
-    showFab: Boolean = true,
-    onFabClick: () -> Unit = {},
+    showFabSenha: Boolean = false,
+    showFabCategoria: Boolean = false,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val navBar = listOf(
@@ -72,16 +72,30 @@ fun Layout(
     Scaffold(
         containerColor = SuperIDBackground,
         floatingActionButton = {
-            if (showFab) {
-                FloatingActionButton(
-                    onClick = {navController.navigate(Routes.addSenha(idUsuario))},
-                    containerColor = SuperIDGrayPrimary
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = "Adicionar",
-                        tint = SuperIDWhite
-                    )
+            when {
+                showFabSenha -> {
+                    FloatingActionButton(
+                        onClick = { navController.navigate(Routes.addSenha(idUsuario)) },
+                        containerColor = SuperIDGrayPrimary
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = "Adicionar Senha",
+                            tint = SuperIDWhite
+                        )
+                    }
+                }
+                showFabCategoria -> {
+                    FloatingActionButton(
+                        onClick = { navController.navigate(Routes.addCategoria(idUsuario)) },
+                        containerColor = SuperIDGrayPrimary
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = "Adicionar Categoria",
+                            tint = SuperIDWhite
+                        )
+                    }
                 }
             }
         },
