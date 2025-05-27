@@ -21,7 +21,7 @@ import com.team43.superidpi3.ui.theme.SuperIDTextWhite
 
 @Composable
 fun CategoriaScreen(navController: NavController, idUsuario: String, padding: PaddingValues) {
-    val categoriasFixas = listOf("Redes Sociais", "Bancos", "Trabalho")
+//    val categoriasFixas = listOf("Redes Sociais", "Bancos", "Trabalho")
 
     val categoriaActions = remember { CategoriaActions() }
     val categoriasFirebaseState = remember { mutableStateOf(listOf<String>()) }
@@ -32,7 +32,7 @@ fun CategoriaScreen(navController: NavController, idUsuario: String, padding: Pa
         }
     }
 
-    val todasCategorias = categoriasFixas + categoriasFirebaseState.value
+//    val todasCategorias = categoriasFixas + categoriasFirebaseState.value
 
     Column(
         modifier = Modifier
@@ -52,7 +52,7 @@ fun CategoriaScreen(navController: NavController, idUsuario: String, padding: Pa
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(todasCategorias) { categoria ->
+            items(categoriasFirebaseState.value) { categoria ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()

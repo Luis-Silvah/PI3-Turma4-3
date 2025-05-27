@@ -55,7 +55,7 @@ fun AddSenhaScreen(
     var categoria by remember { mutableStateOf("") }
 
     // Categorias padrão
-    val categoriasFixas = listOf("Redes Sociais", "Bancos", "Trabalho")
+//    val categoriasFixas = listOf("Redes Sociais", "Bancos", "Trabalho")
 
     val categoriaActions = remember { CategoriaActions() }
     val categoriasFirebaseState = remember { mutableStateOf(listOf<String>()) }
@@ -66,7 +66,7 @@ fun AddSenhaScreen(
         }
     }
 
-    val categoriasCompletas = categoriasFixas + categoriasFirebaseState.value
+//    val categoriasCompletas = categoriasFixas + categoriasFirebaseState.value
 
     var dropdownExpanded by remember { mutableStateOf(false) }
 
@@ -134,7 +134,7 @@ fun AddSenhaScreen(
                 expanded = dropdownExpanded,
                 onDismissRequest = { dropdownExpanded = false }
             ) {
-                categoriasCompletas.forEach { item ->
+                categoriasFirebaseState.value.forEach { item ->
                     DropdownMenuItem(
                         text = { Text(item) },
                         onClick = {
@@ -157,7 +157,7 @@ fun AddSenhaScreen(
                     idUsuario = idUsuario,
                     nome = nome,
                     senha = senha,
-                    categoria = categoria.ifBlank { "Outros" },
+                    categoria = categoria.ifBlank { "Todas" },
                     onSuccess = {
                         navController.popBackStack()
                     },

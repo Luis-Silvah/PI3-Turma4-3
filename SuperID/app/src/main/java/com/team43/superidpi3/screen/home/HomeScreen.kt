@@ -56,9 +56,10 @@ import com.team43.superidpi3.utils.VerificarEmail
 @Composable
 fun HomeScreen(idUsuario: String, navController: NavController, padding: PaddingValues) {
     val ctx = LocalContext.current
+    val CategoriaFixa = "Todas"
 
     // Categorias fixas
-    val categoriasFixas = listOf("Redes sociais", "Bancos", "Trabalho")
+//    val categoriasFixas = listOf("Redes sociais", "Bancos", "Trabalho")
 
     val categoriaActions = remember { CategoriaActions() }
     val categoriasFirebaseState = remember { mutableStateOf(listOf<String>()) }
@@ -70,9 +71,9 @@ fun HomeScreen(idUsuario: String, navController: NavController, padding: Padding
     }
 
     // Une fixas + Firebase
-    val categorias = categoriasFixas + categoriasFirebaseState.value
+//    val categorias = categoriasFixas + categoriasFirebaseState.value
 
-    var categoriaSelecionada by remember { mutableStateOf(categorias.firstOrNull() ?: "") }
+    var categoriaSelecionada by remember { mutableStateOf(categoriasFirebaseState.value.firstOrNull() ?: CategoriaFixa) }
 
     val usuarioState = remember { mutableStateOf<Map<String, Any>?>(null) }
     val senhasState = remember { mutableStateOf<List<Senha>>(emptyList()) }
@@ -105,7 +106,7 @@ fun HomeScreen(idUsuario: String, navController: NavController, padding: Padding
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                items(categorias) { categoria ->
+                items(categoriasFirebaseState.value) { categoria ->
                     val isSelected = categoria == categoriaSelecionada
                     Text(
                         text = categoria,
@@ -124,9 +125,14 @@ fun HomeScreen(idUsuario: String, navController: NavController, padding: Padding
             Spacer(modifier = Modifier.height(16.dp))
 
             // LISTA DE SENHAS FILTRADAS
-            val senhasFiltradas = senhasState.value.filter {
-                it.categoria.equals(categoriaSelecionada, ignoreCase = true)
+            val senhasFiltradas = if (categoriaSelecionada == CategoriaFixa) {
+                senhasState.value
+            } else {
+                senhasState.value.filter {
+                    it.categoria.equals(categoriaSelecionada, ignoreCase = true)
+                }
             }
+
 
             if (senhasFiltradas.isEmpty()) {
                 Text(
