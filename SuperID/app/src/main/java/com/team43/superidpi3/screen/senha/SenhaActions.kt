@@ -19,6 +19,7 @@ class SenhaActions {
                 val senhas = result.mapNotNull { doc ->
                     try {
                         Senha(
+                            id = doc.getString("id") ?: doc.id,
                             nome = doc.getString("nome") ?: "",
                             senha = doc.getString("senha") ?: "",
                             categoria = doc.getString("categoria") ?: "Outros"

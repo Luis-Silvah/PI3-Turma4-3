@@ -57,7 +57,7 @@ fun HomeScreen(idUsuario: String, navController: NavController, padding: Padding
     val ctx = LocalContext.current
 
 
-    val categorias = listOf("Redes sociais", "Banco", "Jogos", "E-mails", "Outros")
+    val categorias = listOf("Redes sociais", "Bancos", "Jogos", "E-mails", "Outros")
     var categoriaSelecionada by remember { mutableStateOf(categorias[0]) }
 
     val usuarioState = remember { mutableStateOf<Map<String, Any>?>(null) }
@@ -132,7 +132,8 @@ fun HomeScreen(idUsuario: String, navController: NavController, padding: Padding
                 )
             } else {
                 senhasFiltradas.forEach { senha ->
-                    SenhaCard(title = senha.nome, description = "Descrição")
+                    SenhaCard(title = senha.nome, description = "descrição", password = senha.senha, senhaId = senha.id,
+                        navController = navController)
                     Spacer(modifier = Modifier.height(2.dp))
                 }
             }

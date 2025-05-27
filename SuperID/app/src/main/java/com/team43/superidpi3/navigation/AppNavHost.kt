@@ -1,6 +1,8 @@
 package com.team43.superidpi3.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -11,7 +13,7 @@ import com.team43.superidpi3.screen.categoria.CategoriaScreen
 import com.team43.superidpi3.screen.home.HomeScreen
 import com.team43.superidpi3.screen.profile.ProfileScreen
 import com.team43.superidpi3.screen.senha.AddSenhaScreen
-import com.team43.superidpi3.screen.senha.AddSenhaScreen
+import com.team43.superidpi3.screen.senha.DeleteSenhaScreen
 import com.team43.superidpi3.screen.signin.SignInScreen
 import com.team43.superidpi3.screen.signin.navigation.ForgotPasswordScreen
 import com.team43.superidpi3.screen.signup.SignUpScreen
@@ -57,6 +59,12 @@ fun AppNavHost(navController: NavHostController) {
             val idUsuario = it.arguments?.getString("idUsuario") ?: ""
             AddSenhaScreen(navController, idUsuario)
         }
+        composable("delete_senha/{senhaId}") { backStackEntry ->
+            val senhaId = backStackEntry.arguments?.getString("senhaId") ?: ""
+            DeleteSenhaScreen(navController, padding = PaddingValues(0.dp), senhaId = senhaId)
+        }
+
+
 
 
 

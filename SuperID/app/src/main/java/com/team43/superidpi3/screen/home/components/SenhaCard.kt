@@ -6,12 +6,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -30,21 +32,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.team43.superidpi3.ui.theme.SuperIDGrayPrimary
 import com.team43.superidpi3.ui.theme.SuperIDTextWhite
 import com.team43.superidpi3.ui.theme.SuperIDWhite
 
 
 @Composable
-fun SenhaCard(title: String, description: String) {
+fun SenhaCard(title: String,
+              navController: NavController,
+              description: String,
+              senhaId:String,
+              password: String) {
     var expanded by remember { mutableStateOf(false) }
+    var senhaVisivel by remember { mutableStateOf(false) }
 
     Card(
         colors = CardDefaults.cardColors(
             containerColor = SuperIDGrayPrimary,
         ),
         shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp, horizontal = 16.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp, horizontal = 16.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -60,25 +70,46 @@ fun SenhaCard(title: String, description: String) {
             Spacer(modifier = Modifier.width(12.dp))
 
             // Título e descrição
-            Column(modifier = Modifier.weight(1f)) {
+            // Título, descrição e senha
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .align(Alignment.Top) // Garante alinhamento vertical com o topo do ícone
+            ) {
                 Text(text = title, color = SuperIDTextWhite)
+                Spacer(modifier = Modifier.height(8.dp))
+
                 Text(
                     text = description,
                     color = SuperIDTextWhite.copy(alpha = 0.7f),
                     fontSize = 14.sp,
-                    modifier = Modifier.padding(top = 16.dp, bottom = 16.dp)
+                    modifier = Modifier.padding(top = 4.dp, bottom = 4.dp)
                 )
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.VisibilityOff,
-                        contentDescription = null,
-                        tint = SuperIDTextWhite.copy(alpha = 0.7f),
-                        modifier = Modifier.size(16.dp)
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.align(Alignment.Start) // Alinha com o início do título/descrição
+                ) {
+                    IconButton(
+                        onClick = { senhaVisivel = !senhaVisivel },
+                        modifier = Modifier.size(20.dp).padding(end = 0.dp) // Reduz tamanho e remove espaçamento
+                    ) {
+                        Icon(
+                            imageVector = if (senhaVisivel) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            contentDescription = if (senhaVisivel) "Ocultar senha" else "Exibir senha",
+                            tint = SuperIDTextWhite.copy(alpha = 0.7f),
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                    Text(
+                        text = if (senhaVisivel) password else "●●●●●●●●●",
+                        color = SuperIDTextWhite.copy(alpha = 0.7f),
+                        fontSize = 14.sp
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(text = "●●●●●●●●●●●", color = SuperIDTextWhite.copy(alpha = 0.7f), fontSize = 14.sp)
                 }
             }
+
 
             // Menu de três pontinhos
             Box {
@@ -100,6 +131,8 @@ fun SenhaCard(title: String, description: String) {
                     DropdownMenuItem(
                         onClick = {
                             expanded = false
+                            navController.navigate("delete_senha/$senhaId")
+
                         },
                         text = {
                             Text("Deletar")
@@ -116,3 +149,4 @@ fun SenhaCard(title: String, description: String) {
         }
     }
 }
+
