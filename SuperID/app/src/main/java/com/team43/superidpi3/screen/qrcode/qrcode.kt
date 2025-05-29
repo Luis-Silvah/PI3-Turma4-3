@@ -171,7 +171,6 @@ fun WithPermission(
 fun CameraAppScreen(navController: NavHostController) {
     var lensFacing by remember { mutableIntStateOf(CameraSelector.LENS_FACING_BACK) }
     var zoomLevel by remember { mutableFloatStateOf(0.0f) }
-    val localContext = LocalContext.current
     var qrCodeResult by remember { mutableStateOf<String?>(null) }
 
     Box {
@@ -182,15 +181,6 @@ fun CameraAppScreen(navController: NavHostController) {
                 qrCodeResult = result
             }
         )
-
-
-        Column(modifier = Modifier.align(Alignment.BottomCenter)) {
-            Row {
-                Button(onClick = { lensFacing = CameraSelector.LENS_FACING_BACK }) {
-                    Text("Back camera")
-                }
-            }
-        }
 
         qrCodeResult?.let {
             Text(
@@ -223,22 +213,6 @@ fun CameraPreview(
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val localContext = LocalContext.current
-//
-//    fun rebindCameraProvider() {
-//        cameraProvider?.let { provider ->
-//            val selector = CameraSelector.Builder()
-//                .requireLensFacing(lensFacing)
-//                .build()
-//            provider.unbindAll()
-//            val camera = provider.bindToLifecycle(
-//                localContext as LifecycleOwner,
-//                selector,
-//                previewUseCase,
-//                analysisUseCase
-//            )
-//            cameraControl = camera.cameraControl
-//        }
-//    }
 
     fun rebindCameraProvider() {
         cameraProvider?.let { provider ->

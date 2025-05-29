@@ -9,14 +9,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.FabPosition
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
@@ -55,8 +53,7 @@ fun Layout(
     idUsuario: String,
     isSearch: Boolean = true,
     isProfile: Boolean = true,
-    showFabSenha: Boolean = false,
-    showFabCategoria: Boolean = false,
+    floatingActionButton: @Composable () -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
     val navBar = listOf(
@@ -71,34 +68,7 @@ fun Layout(
 
     Scaffold(
         containerColor = SuperIDBackground,
-        floatingActionButton = {
-            when {
-                showFabSenha -> {
-                    FloatingActionButton(
-                        onClick = { navController.navigate(Routes.addSenha(idUsuario)) },
-                        containerColor = SuperIDGrayPrimary
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Add,
-                            contentDescription = "Adicionar Senha",
-                            tint = SuperIDWhite
-                        )
-                    }
-                }
-                showFabCategoria -> {
-                    FloatingActionButton(
-                        onClick = { navController.navigate(Routes.addCategoria(idUsuario)) },
-                        containerColor = SuperIDGrayPrimary
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Add,
-                            contentDescription = "Adicionar Categoria",
-                            tint = SuperIDWhite
-                        )
-                    }
-                }
-            }
-        },
+        floatingActionButton = floatingActionButton,
         floatingActionButtonPosition = FabPosition.End,
         topBar = {
             Row(
