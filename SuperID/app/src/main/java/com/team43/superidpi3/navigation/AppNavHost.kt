@@ -1,7 +1,10 @@
 package com.team43.superidpi3.navigation
 
+import android.Manifest
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -12,7 +15,9 @@ import com.team43.superidpi3.components.Layout
 import com.team43.superidpi3.screen.categoria.AddCategoriaScreen
 import com.team43.superidpi3.screen.categoria.CategoriaScreen
 import com.team43.superidpi3.screen.home.HomeScreen
+import com.team43.superidpi3.screen.qrcode.CameraAppScreen
 import com.team43.superidpi3.screen.profile.ProfileScreen
+import com.team43.superidpi3.screen.qrcode.WithPermission
 import com.team43.superidpi3.screen.senha.AddSenhaScreen
 import com.team43.superidpi3.screen.senha.DeleteSenhaScreen
 import com.team43.superidpi3.screen.signin.SignInScreen
@@ -39,7 +44,7 @@ fun AppNavHost(navController: NavHostController) {
         ) {
             val idUsuario = it.arguments?.getString("idUsuario") ?: ""
 
-            Layout(0, navController, "Gerenciar Senhas", idUsuario) { padding ->
+            Layout(navController, "Gerenciar Senhas", idUsuario) { padding ->
                 HomeScreen(idUsuario, navController, padding)
             }
         }
@@ -50,7 +55,6 @@ fun AppNavHost(navController: NavHostController) {
         ) {
             val idUsuario = it.arguments?.getString("idUsuario") ?: ""
             Layout(
-                routeIndex = 2,
                 navController = navController,
                 title = "Categorias",
                 idUsuario = idUsuario,
@@ -59,8 +63,8 @@ fun AppNavHost(navController: NavHostController) {
             ) { padding ->
                 CategoriaScreen(navController, idUsuario, padding)
             }
-
         }
+
         composable(
             route = Routes.AddSenha,
             arguments = listOf(navArgument("idUsuario") { type = NavType.StringType })
@@ -77,17 +81,33 @@ fun AppNavHost(navController: NavHostController) {
             AddCategoriaScreen(navController, idUsuario)
         }
 
-
-
-
-
-
         composable(Routes.SignUp) {
             SignUpScreen(navController)
         }
 
         composable(Routes.SignIn) {
             SignInScreen(navController)
+        }
+
+        composable(
+            route = Routes.Qrcode,
+            arguments = listOf(navArgument("idUsuario") { type = NavType.StringType })) {
+            val idUsuario = it.arguments?.getString("idUsuario") ?: ""
+
+            Layout(
+                navController = navController,
+                title = "QRcode",
+                idUsuario = idUsuario,
+                showFabSenha = false,
+                showFabCategoria = true
+            ) { padding ->
+                WithPermission(
+                    modifier = Modifier.padding(padding),
+                    permission = Manifest.permission.CAMERA
+                ) {
+                    CameraAppScreen(navController)
+                }
+            }
         }
 
         composable(Routes.ForgotPassword) {
