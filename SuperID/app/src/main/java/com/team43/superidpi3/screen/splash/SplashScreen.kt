@@ -1,5 +1,7 @@
 package com.team43.superidpi3.screen.splash
 
+import android.util.Log
+import android.widget.Toast
 import com.team43.superidpi3.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,6 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -28,16 +31,26 @@ import com.team43.superidpi3.navigation.Routes
 import com.team43.superidpi3.ui.theme.SuperIDBackground
 import com.team43.superidpi3.ui.theme.SuperIDButtonBlue
 import com.team43.superidpi3.ui.theme.SuperIDTextWhite
+import com.team43.superidpi3.utils.VerificarEmail
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(navController: NavHostController) {
+    val ctx = LocalContext.current
+
     LaunchedEffect(true) {
         delay(2000)
-        val user = Firebase.auth.currentUser
-        if (user != null) {
+        val usuario = Firebase.auth.currentUser
+        if (usuario != null) {
+
+            VerificarEmail(ctx).verifica { emailVerificado ->
+                if (!emailVerificado) {
+                    Toast.makeText(ctx, "Seu email ainda não foi verificado.", Toast.LENGTH_SHORT).show()
+                }
+             }
+
             // Usuário está logado
-            navController.navigate(Routes.home(user.uid)) {
+            navController.navigate(Routes.home(usuario.uid)) {
                 popUpTo(Routes.Splash) { inclusive = true }
             }
         } else {
