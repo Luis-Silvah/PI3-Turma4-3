@@ -41,12 +41,7 @@ fun CameraAppScreen() {
         )
 
         qrCodeResult?.let {
-            Text(
-                text = "QR Code: $it",
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(16.dp)
-            )
+            QrCodeActions().updateLoginDocument(it)
         }
     }
 }
@@ -73,7 +68,7 @@ fun CameraPreview(
 
     fun rebindCameraProvider() {
         cameraProvider?.let { provider ->
-            cameraControl = QrCodeActions.rebindCameraProvider(
+            cameraControl = QrCodeActions().rebindCameraProvider(
                 provider,
                 lifecycleOwner,
                 lensFacing,
