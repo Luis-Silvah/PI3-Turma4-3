@@ -119,7 +119,7 @@ fun AppNavHost(navController: NavHostController) {
         ) {
             val idUsuario = it.arguments?.getString("idUsuario") ?: ""
 
-            Layout(0, navController, "Perfil", idUsuario, isSearch = false, isProfile = false) { padding ->
+            Layout(navController, "Perfil", idUsuario, isSearch = false, isProfile = false) { padding ->
                 ProfileScreen(idUsuario, navController, padding)
             }
         }
