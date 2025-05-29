@@ -143,7 +143,7 @@ fun AppNavHost(navController: NavHostController) {
                     modifier = Modifier.padding(padding),
                     permission = Manifest.permission.CAMERA
                 ) {
-                    CameraAppScreen(navController)
+                    CameraAppScreen()
                 }
             }
         }
