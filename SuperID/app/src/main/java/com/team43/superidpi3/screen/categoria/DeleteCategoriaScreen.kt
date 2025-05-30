@@ -1,7 +1,9 @@
-package com.team43.superidpi3.screen.senha
+package com.team43.superidpi3.screen.categoria
 
 import android.util.Log
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,15 +19,13 @@ import com.team43.superidpi3.components.InputField
 import com.team43.superidpi3.navigation.Routes
 import com.team43.superidpi3.ui.theme.SuperIDTextWhite
 
-fun deletarSenha(
+fun deletarCategoria(
     firestore: FirebaseFirestore,
     userId: String,
     categoriaNome: String,
-    senhaId: String,
     onSuccess: () -> Unit,
     onError: (Exception) -> Unit
 ) {
-    // 1. Busca a categoria pelo campo "nome"
     firestore.collection("usuarios")
         .document(userId)
         .collection("categorias")
@@ -36,13 +36,10 @@ fun deletarSenha(
                 val categoriaDoc = querySnapshot.documents[0]
                 val categoriaId = categoriaDoc.id
 
-                // 2. Deleta a senha na categoria correta
                 firestore.collection("usuarios")
                     .document(userId)
                     .collection("categorias")
                     .document(categoriaId)
-                    .collection("senhas")
-                    .document(senhaId)
                     .delete()
                     .addOnSuccessListener {
                         onSuccess()
@@ -60,15 +57,15 @@ fun deletarSenha(
 }
 
 @Composable
-fun DeleteSenhaScreen(
+fun DeleteCategoriaScreen(
     navController: NavController,
     padding: PaddingValues,
-    senhaId: String,
-    categoriaNome: String // <- NOVO PARÂMETRO
+    categoriaNome: String,
+    idUsuario: String
 ) {
     var confirmText by remember { mutableStateOf("") }
     val firestore = FirebaseFirestore.getInstance()
-    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+    val userId = idUsuario
 
     Column(
         modifier = Modifier
@@ -79,24 +76,44 @@ fun DeleteSenhaScreen(
     ) {
 
         Header {
-            navController.navigate(Routes.home(userId))
+            navController.popBackStack() // ou navegar para tela anterior
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Deletar Senha",
+            text = "Deletar Categoria",
             color = SuperIDTextWhite,
             fontSize = 35.sp
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = "Digite \"confirmar\" no campo abaixo para concluir o processo de exclusão:",
             color = SuperIDTextWhite.copy(alpha = 0.8f),
             fontSize = 16.sp
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(start = 4.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Warning,
+                contentDescription = "Aviso",
+                tint = Color(0xFFFFA000), // amarelo escuro/material warning color
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "AVISO: Esse processo irá excluir todas as senhas salvas nessa categoria",
+                color = Color(0xFFFFC107), // amarelo claro/material warning light
+                fontSize = 14.sp
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -112,17 +129,15 @@ fun DeleteSenhaScreen(
 
         Button(
             onClick = {
-                deletarSenha(
+                deletarCategoria(
                     firestore = firestore,
                     userId = userId,
                     categoriaNome = categoriaNome,
-                    senhaId = senhaId,
                     onSuccess = {
                         navController.popBackStack()
                     },
                     onError = { e ->
-                        // Aqui você pode mostrar um Toast, Snackbar ou Log
-                        println("Erro ao deletar senha: ${e.message}")
+                        println("Erro ao deletar categoria: ${e.message}")
                     }
                 )
             },

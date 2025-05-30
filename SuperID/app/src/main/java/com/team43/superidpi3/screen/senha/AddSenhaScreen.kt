@@ -21,26 +21,51 @@ fun salvarSenha(
     idUsuario: String,
     nome: String,
     senha: String,
-    categoria: String,
+    nomeCategoria: String,
+    descricao: String?,
+    login: String?,
     onSuccess: () -> Unit,
     onFailure: (Exception) -> Unit
 ) {
     val db = FirebaseFirestore.getInstance()
-    val senhaRef = db.collection("usuarios")
+
+    db.collection("usuarios")
         .document(idUsuario)
-        .collection("senhas")
-        .document()
+        .collection("categorias")
+        .whereEqualTo("nome", nomeCategoria)
+        .get()
+        .addOnSuccessListener { querySnapshot ->
+            if (!querySnapshot.isEmpty) {
+                val categoriaDoc = querySnapshot.documents.first()
+                val categoriaId = categoriaDoc.id
 
-    val novaSenha = hashMapOf(
-        "id" to senhaRef.id,
-        "nome" to nome,
-        "senha" to senha,
-        "categoria" to categoria
-    )
+                val senhaRef = db.collection("usuarios")
+                    .document(idUsuario)
+                    .collection("categorias")
+                    .document(categoriaId)
+                    .collection("senhas")
+                    .document()
 
-    senhaRef.set(novaSenha)
-        .addOnSuccessListener { onSuccess() }
-        .addOnFailureListener { exception -> onFailure(exception) }
+                val novaSenha = hashMapOf(
+                    "id" to senhaRef.id,
+                    "nome" to nome,
+                    "senha" to senha,
+                    "categoria" to nomeCategoria,
+                    "descricao" to (descricao ?: ""),
+                    "login" to (login ?: "")
+                )
+
+                senhaRef.set(novaSenha)
+                    .addOnSuccessListener { onSuccess() }
+                    .addOnFailureListener { exception -> onFailure(exception) }
+
+            } else {
+                onFailure(Exception("Categoria não encontrada."))
+            }
+        }
+        .addOnFailureListener { exception ->
+            onFailure(exception)
+        }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,10 +77,9 @@ fun AddSenhaScreen(
 ) {
     var nome by remember { mutableStateOf("") }
     var senha by remember { mutableStateOf("") }
+    var descricao by remember { mutableStateOf("") }
+    var login by remember { mutableStateOf("") }
     var categoria by remember { mutableStateOf("") }
-
-    // Categorias padrão
-//    val categoriasFixas = listOf("Redes Sociais", "Bancos", "Trabalho")
 
     val categoriaActions = remember { CategoriaActions() }
     val categoriasFirebaseState = remember { mutableStateOf(listOf<String>()) }
@@ -65,8 +89,6 @@ fun AddSenhaScreen(
             categoriasFirebaseState.value = lista
         }
     }
-
-//    val categoriasCompletas = categoriasFixas + categoriasFirebaseState.value
 
     var dropdownExpanded by remember { mutableStateOf(false) }
 
@@ -112,6 +134,26 @@ fun AddSenhaScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        InputField(
+            label = "Login (opcional)",
+            value = login,
+            onValueChange = { login = it },
+            placeholder = "Digite o login",
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        InputField(
+            label = "Descrição (opcional)",
+            value = descricao,
+            onValueChange = { descricao = it },
+            placeholder = "Digite uma descrição",
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         ExposedDropdownMenuBox(
             expanded = dropdownExpanded,
             onExpandedChange = { dropdownExpanded = !dropdownExpanded },
@@ -151,13 +193,15 @@ fun AddSenhaScreen(
         BtnPrimary(
             label = "Salvar Senha",
             height = 54.dp,
-            enabled = nome.isNotBlank() && senha.isNotBlank(),
+            enabled = nome.isNotBlank() && senha.isNotBlank() && categoria.isNotBlank(),
             onClick = {
                 salvarSenha(
                     idUsuario = idUsuario,
                     nome = nome,
                     senha = senha,
-                    categoria = categoria.ifBlank { "Todas" },
+                    nomeCategoria = categoria,
+                    descricao = if (descricao.isBlank()) null else descricao,
+                    login = if (login.isBlank()) null else login,
                     onSuccess = {
                         navController.popBackStack()
                     },
@@ -169,6 +213,3 @@ fun AddSenhaScreen(
         )
     }
 }
-
-
-

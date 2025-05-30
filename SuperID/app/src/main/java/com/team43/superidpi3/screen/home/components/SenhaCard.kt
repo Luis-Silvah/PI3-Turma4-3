@@ -39,11 +39,14 @@ import com.team43.superidpi3.ui.theme.SuperIDWhite
 
 
 @Composable
-fun SenhaCard(title: String,
-              navController: NavController,
-              description: String,
-              senhaId:String,
-              password: String) {
+fun SenhaCard(
+    title: String,
+    navController: NavController,
+    description: String,
+    senhaId: String,
+    password: String,
+    categoriaNome: String // novo parâmetro
+) {
     var expanded by remember { mutableStateOf(false) }
     var senhaVisivel by remember { mutableStateOf(false) }
 
@@ -70,7 +73,6 @@ fun SenhaCard(title: String,
             Spacer(modifier = Modifier.width(12.dp))
 
             // Título e descrição
-            // Título, descrição e senha
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -131,8 +133,8 @@ fun SenhaCard(title: String,
                     DropdownMenuItem(
                         onClick = {
                             expanded = false
-                            navController.navigate("delete_senha/$senhaId")
-
+                            // Passa categoriaNome na navegação
+                            navController.navigate("delete_senha/$senhaId/$categoriaNome")
                         },
                         text = {
                             Text("Deletar")
@@ -149,4 +151,5 @@ fun SenhaCard(title: String,
         }
     }
 }
+
 
