@@ -1,6 +1,7 @@
 package com.team43.superidpi3.screen.welcome
 
 import com.team43.superidpi3.R
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,11 +25,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -47,10 +45,23 @@ import kotlinx.coroutines.launch
 fun WelcomeScreen(navController: NavController) {
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
+
     val pages = listOf(
         R.drawable.welcome_01,
-        R.drawable.welcome_01,
-        R.drawable.welcome_01
+        R.drawable.welcome_02,
+        R.drawable.welcome_03
+    )
+
+    val titles = listOf(
+        "Bem-vindo ao SuperId",
+        "Login através de QR Code",
+        "Jogue seu Caderno de Senhas Fora"
+    )
+
+    val descriptions = listOf(
+        "Sua central segura para armazenar, organizar e acessar todas as suas senhas com praticidade e proteção.",
+        "Cadastre suas senhas e faça login instânteneo através do nosso app com QR Code.",
+        "Aqui você gerencia suas senhas sem se preocupar se alguém vai rouba-lás, tudo garantido com criptografia de ponta"
     )
 
     Box(
@@ -60,17 +71,17 @@ fun WelcomeScreen(navController: NavController) {
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceBetween,
+            verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(90.dp)) // margem do topo
 
             HorizontalPager(
                 count = pages.size,
                 state = pagerState,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(300.dp)
+                    .height(380.dp)
             ) { page ->
                 Image(
                     painter = painterResource(id = pages[page]),
@@ -80,7 +91,11 @@ fun WelcomeScreen(navController: NavController) {
                 )
             }
 
-            Row(horizontalArrangement = Arrangement.Center) {
+            Spacer(modifier = Modifier.height(12.dp)) // pontos mais próximos da imagem
+
+            Row(
+                horizontalArrangement = Arrangement.Center
+            ) {
                 repeat(pages.size) { index ->
                     val color = if (pagerState.currentPage == index)
                         SuperIDButtonBlue
@@ -99,57 +114,47 @@ fun WelcomeScreen(navController: NavController) {
                 }
             }
 
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    buildAnnotatedString {
-                        withStyle(
-                            style = SpanStyle(
-                                color = SuperIDTextWhite,
-                                fontSize = 28.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        ) {
-                            append("Bem Vindo ao Super")
-                        }
-                        withStyle(
-                            style = SpanStyle(
-                                color = SuperIDButtonBlue,
-                                fontSize = 28.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        ) {
-                            append("Id")
-                        }
-                    },
-                    modifier = Modifier.padding(top = 24.dp)
-                )
+            Spacer(modifier = Modifier.height(40.dp)) //distancia textopontos
 
-                Text(
-                    text = "Sua central segura para armazenar, organizar e acessar todas as suas senhas com praticidade e proteção.",
-                    color = SuperIDTextWhite.copy(alpha = 0.7f),
-                    fontSize = 14.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(16.dp)
-                )
+            Text(
+                text = titles[pagerState.currentPage],
+                color = SuperIDTextWhite,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
 
-                BtnPrimary(
-                    label = if (pagerState.currentPage == pages.size - 1) "Entrar" else "Próximo",
-                    height = 54.dp,
-                    enabled = true,
-                    onClick = {
-                        if (pagerState.currentPage < pages.size - 1) {
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                            }
-                        } else {
-                            navController.navigate(Routes.SignIn)
+            Text(
+                text = descriptions[pagerState.currentPage],
+                color = SuperIDTextWhite.copy(alpha = 0.7f),
+                fontSize = 14.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top = 4.dp, start = 16.dp, end = 16.dp)
+            )
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            BtnPrimary(
+                label = if (pagerState.currentPage == pages.size - 1) "Entrar" else "Próximo",
+                height = 54.dp,
+                enabled = true,
+                onClick = {
+                    if (pagerState.currentPage < pages.size - 1) {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
                         }
+                    } else {
+                        navController.navigate(Routes.SignIn)
                     }
-                )
-            }
-            Spacer(modifier = Modifier.height(28.dp))
+                }
+            )
+
+            Spacer(modifier = Modifier.height(28.dp)) // margem inferior
         }
     }
 }
+
+
+
 
 
