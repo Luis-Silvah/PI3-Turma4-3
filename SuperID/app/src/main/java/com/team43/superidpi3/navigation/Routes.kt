@@ -15,6 +15,10 @@ object Routes {
     const val Profile = "profile/{idUsuario}"
 
     const val Qrcode = "qrcode/{idUsuario}"
+    const val deleteCategoriaBase = "deletecategoria"
+
+    fun deleteCategoria(idUsuario: String, categoriaNome: String) =
+        "$deleteCategoriaBase/$idUsuario/$categoriaNome"
 
     fun home(idUsuario: String) = "home/${idUsuario}"
     fun qrcode(idUsuario: String) = "qrcode/$idUsuario"
