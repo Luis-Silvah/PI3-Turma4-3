@@ -1,7 +1,7 @@
 const PROJECT_ID = "superid-pi3-turma4-3";
 const API_KEY =
   "y7QAANKBedPovC-wkOG_Pru_5cz-cbEilGQsS0wUINkfjqFBskZvumDrllOQ4R_V9LeXLqVs6lrDFUzwi35RUu0j1BgRjK4ozltngFdcG0sI7qo8-xMsin6EVXpUahD3_JNlXxSMyzapFZQCpnohk5rvUWkYFH0aLrqg_xhKJCmrPA3WRcmZz_jlGiEUM_Dz33e3QyEFPmk0RH7PIQdQej26mJZoM4H0H9iOHD6Bpsp-kzst0PHsWuFu_2oYR1OL";
-const SITE_URL = "www.example.com";
+const SITE_URL = "www.vercel.app";
 
 let loginToken = null;
 let pollInterval = null;
@@ -30,7 +30,7 @@ function closeModal() {
 async function generateQRCode() {
   try {
     const res = await fetch(
-      `http://127.0.0.1:5001/super-id-a0d24/us-central1/performAuth`,
+      `https://us-central1-super-id-a0d24.cloudfunctions.net/performAuth`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -59,7 +59,7 @@ async function generateQRCode() {
 async function checkLoginStatus() {
   try {
     const res = await fetch(
-      `http://127.0.0.1:5001/super-id-a0d24/us-central1/getLoginStatus`,
+      `https://us-central1-super-id-a0d24.cloudfunctions.net/getLoginStatus`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
