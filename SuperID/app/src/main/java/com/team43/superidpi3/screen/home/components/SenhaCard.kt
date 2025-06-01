@@ -36,6 +36,7 @@ import androidx.navigation.NavController
 import com.team43.superidpi3.ui.theme.SuperIDGrayPrimary
 import com.team43.superidpi3.ui.theme.SuperIDTextWhite
 import com.team43.superidpi3.ui.theme.SuperIDWhite
+import com.team43.superidpi3.utils.Criptografia
 
 
 @Composable
@@ -49,6 +50,8 @@ fun SenhaCard(
 ) {
     var expanded by remember { mutableStateOf(false) }
     var senhaVisivel by remember { mutableStateOf(false) }
+
+    val senhaDescriptografada = Criptografia.decrypt(password)
 
     Card(
         colors = CardDefaults.cardColors(
@@ -105,7 +108,7 @@ fun SenhaCard(
                         )
                     }
                     Text(
-                        text = if (senhaVisivel) password else "●●●●●●●●●",
+                        text = if (senhaVisivel) senhaDescriptografada else "●●●●●●●●●",
                         color = SuperIDTextWhite.copy(alpha = 0.7f),
                         fontSize = 14.sp
                     )

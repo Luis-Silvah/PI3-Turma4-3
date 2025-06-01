@@ -16,6 +16,7 @@ import com.team43.superidpi3.components.InputField
 import com.team43.superidpi3.navigation.Routes
 import com.team43.superidpi3.screen.categoria.CategoriaActions
 import com.team43.superidpi3.ui.theme.SuperIDTextWhite
+import com.team43.superidpi3.utils.Criptografia
 
 fun salvarSenha(
     idUsuario: String,
@@ -28,6 +29,8 @@ fun salvarSenha(
     onFailure: (Exception) -> Unit
 ) {
     val db = FirebaseFirestore.getInstance()
+
+    val senhaCriptografada = Criptografia.encrypt(senha)
 
     db.collection("usuarios")
         .document(idUsuario)
@@ -49,7 +52,7 @@ fun salvarSenha(
                 val novaSenha = hashMapOf(
                     "id" to senhaRef.id,
                     "nome" to nome,
-                    "senha" to senha,
+                    "senha" to senhaCriptografada,
                     "categoria" to nomeCategoria,
                     "descricao" to (descricao ?: ""),
                     "login" to (login ?: "")
