@@ -51,7 +51,7 @@ class SignUpActions(private val ctx: Context, private val navController: NavCont
                         "ERROR_USER_DISABLED" -> "Conta desativada. Entre em contato com o suporte"
                         else -> "Não foi possível criar usuário"
                     }
-                    Toast.makeText(ctx, toast, Toast.LENGTH_LONG).show()
+//                    Toast.makeText(ctx, toast, Toast.LENGTH_LONG).show()
                     Log.e(TAG, "Erro ao criar conta: ${task.exception?.localizedMessage}")
                 }
             }
@@ -72,14 +72,35 @@ class SignUpActions(private val ctx: Context, private val navController: NavCont
         db.collection("usuarios")
             .document(uid)
             .set(usuario)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d(TAG, "Usuário salvo com sucesso!")
-                } else {
-                    Log.e(TAG, "Não foi possível salvar usuário", task.exception)
+            .addOnSuccessListener {
+                Log.d(TAG, "Usuário salvo com sucesso!")
+
+                // Criar categorias padrão na subcoleção "categorias"
+                val categoriasPadrao = listOf("Sites Web", "Aplicativos", "Num Pads")
+                val categoriasCollection = db.collection("usuarios")
+                    .document(uid)
+                    .collection("categorias")
+
+                categoriasPadrao.forEach { categoriaNome ->
+                    val categoriaData = hashMapOf(
+                        "nome" to categoriaNome,
+                        "isPadrao" to true
+                    )
+                    categoriasCollection.add(categoriaData)
+                        .addOnSuccessListener {
+                            Log.d(TAG, "Categoria '$categoriaNome' criada com sucesso!")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e(TAG, "Erro ao criar categoria '$categoriaNome'", e)
+                        }
                 }
+
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Não foi possível salvar usuário", e)
             }
     }
+
 
     // Função para verificar se o usuário pode usar o Login Sem Senha
 //    fun verificarAcessoLoginSemSenha(onAcessoPermitido: (Boolean) -> Unit) {

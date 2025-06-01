@@ -12,17 +12,18 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
 import com.team43.superidpi3.ui.theme.SuperIDButtonBlue
 import com.team43.superidpi3.ui.theme.SuperIDTextWhite
+import androidx.compose.ui.graphics.Color
 
 @Composable
-fun BtnPrimary(label: String, height: Dp, enabled: Boolean, onClick: () -> Unit){
+fun BtnPrimary(label: String, height: Dp, enabled: Boolean, onClick: () -> Unit, containerColor: Color = SuperIDButtonBlue){
     Button(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
             .height(height),
         colors = ButtonDefaults.buttonColors(
-            containerColor = SuperIDButtonBlue,
-            disabledContainerColor = SuperIDButtonBlue.copy(alpha = 0.3f),
+            containerColor = containerColor,
+            disabledContainerColor = containerColor.copy(alpha = 0.4f),
             contentColor = SuperIDTextWhite,
             disabledContentColor = SuperIDTextWhite.copy(alpha = 0.5f)
         ),

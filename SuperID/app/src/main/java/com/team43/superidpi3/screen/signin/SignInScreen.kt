@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.team43.superidpi3.components.BtnPrimary
 import com.team43.superidpi3.components.Header
@@ -36,13 +37,14 @@ import com.team43.superidpi3.navigation.Routes
 import com.team43.superidpi3.ui.theme.SuperIDBackground
 import com.team43.superidpi3.ui.theme.SuperIDButtonBlue
 import com.team43.superidpi3.ui.theme.SuperIDTextWhite
+import com.team43.superidpi3.utils.EmailViewModel
 
 @Composable
 fun SignInScreen(navController: NavController) {
     val ctx = LocalContext.current
     val SignInActions = remember { SignInActions(ctx, navController) }
 
-    var email by remember { mutableStateOf("") }
+    val emailViewModel: EmailViewModel = viewModel()
     var senha by remember { mutableStateOf("") }
 
     Column(
@@ -63,10 +65,11 @@ fun SignInScreen(navController: NavController) {
         // Email
         InputField(
             label = "Email",
-            value = email,
-            onValueChange = { email = it },
+            value = emailViewModel.email,
+            onValueChange = { input -> emailViewModel.updateEmail(input) },
             placeholder = "example@superid.com",
-            leadingIcon = Icons.Filled.Email
+            leadingIcon = Icons.Filled.Email,
+            validatorLabel = if(emailViewModel.emailHasErrors) "Formato Email inválido" else "",
         )
         Spacer(modifier = Modifier.height(18.dp))
         // Senha
@@ -92,7 +95,7 @@ fun SignInScreen(navController: NavController) {
             )
         }
         Spacer(modifier = Modifier.height(18.dp))
-        BtnPrimary("Entrar", 54.dp, email.isNotBlank() && senha.isNotBlank(), { SignInActions.login(email, senha) })
+        BtnPrimary("Entrar", 54.dp, emailViewModel.email.isNotBlank() && senha.isNotBlank(), { SignInActions.login(emailViewModel.email, senha) })
         Spacer(modifier = Modifier.height(24.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
