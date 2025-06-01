@@ -79,10 +79,10 @@ fun PopupScreen(idUsuario: String, status: String, mensagem: String, navControll
         Spacer(modifier = Modifier.height(24.dp))
 
         BtnPrimary(
-            label = "Continuar",
+            label = if(status == "sucesso") "Continuar" else "Tentar novamente",
             height = 54.dp,
             enabled = true,
-            onClick = { navController.navigate(Routes.home(idUsuario)) }
+            onClick = {  if(status == "sucesso") navController.navigate(Routes.home(idUsuario)) else navController.navigate(Routes.qrcode(idUsuario))  }
         )
     }
 }
