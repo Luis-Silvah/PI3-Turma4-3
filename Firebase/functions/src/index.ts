@@ -1,16 +1,25 @@
-import { onRequest } from "firebase-functions/v2/https";
+import {onRequest} from "firebase-functions/v2/https";
 import * as logger from "firebase-functions/logger";
 
 import * as crypto from "crypto";
 import * as QRCode from "qrcode";
-import { initializeApp } from "firebase-admin/app";
-import { getFirestore, Timestamp } from "firebase-admin/firestore";
+import {initializeApp} from "firebase-admin/app";
+import {getFirestore, Timestamp} from "firebase-admin/firestore";
 
 initializeApp();
 const db = getFirestore();
 
 export const createSiteParceiro = onRequest(async (req, res) => {
-  const { url, emailResponsavel } = req.body;
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.set("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    res.status(204).send("");
+    return;
+  }
+
+  const {url, emailResponsavel} = req.body;
 
   if (!url || !emailResponsavel) {
     res.status(400).send("Campos url e email do responsavel invalidos");
@@ -19,14 +28,23 @@ export const createSiteParceiro = onRequest(async (req, res) => {
 
   const apiKey = generateRandomBase64(256);
 
-  await db.collection("partners").add({ url, apiKey, email: emailResponsavel });
+  await db.collection("partners").add({url, apiKey, email: emailResponsavel});
 
-  logger.info("Parceiro criado:", { apiKey, url });
-  res.send({ msg: "Parceiro ciado!", apiKey, url });
+  logger.info("Parceiro criado:", {apiKey, url});
+  res.send({msg: "Parceiro ciado!", apiKey, url});
 });
 
 export const performAuth = onRequest(async (req, res) => {
-  const { apiKey, url } = req.body;
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.set("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    res.status(204).send("");
+    return;
+  }
+
+  const {apiKey, url} = req.body;
 
   if (!apiKey || !url) {
     res.status(400).send("Campos apiKey e url invalidos");
@@ -42,7 +60,7 @@ export const performAuth = onRequest(async (req, res) => {
       .get();
 
     if (snapshot.empty) {
-      logger.warn("Parceiro não autorizado:", { apiKey, url });
+      logger.warn("Parceiro não autorizado:", {apiKey, url});
       res.status(403).send("Unauthorized partner");
       return;
     }
@@ -59,7 +77,7 @@ export const performAuth = onRequest(async (req, res) => {
 
     const qrCodeBase64 = await generateQRCodeBase64(loginToken);
 
-    res.status(200).send({ qrBase64: qrCodeBase64, loginToken: loginToken });
+    res.status(200).send({qrBase64: qrCodeBase64, loginToken: loginToken});
   } catch (error) {
     logger.error("Erro em performAuth", error);
     res.status(500).send("Internal server error");
@@ -67,7 +85,16 @@ export const performAuth = onRequest(async (req, res) => {
 });
 
 export const getLoginStatus = onRequest(async (req, res) => {
-  const { loginToken } = req.body;
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.set("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    res.status(204).send("");
+    return;
+  }
+
+  const {loginToken} = req.body;
 
   if (!loginToken) {
     res.status(400).send("Missing loginToken");
@@ -90,7 +117,7 @@ export const getLoginStatus = onRequest(async (req, res) => {
 
     if (diff > 60 || (loginData?.attempts ?? 0) >= 3) {
       await loginDocRef.delete();
-      res.status(410).send({ status: "expired" });
+      res.status(410).send({status: "expired"});
       return;
     }
 
@@ -100,9 +127,9 @@ export const getLoginStatus = onRequest(async (req, res) => {
     });
 
     if (loginData?.user) {
-      res.status(200).send({ status: "success", uid: loginData.user });
+      res.status(200).send({status: "success", uid: loginData.user});
     } else {
-      res.status(202).send({ status: "pending" });
+      res.status(202).send({status: "pending"});
     }
   } catch (error) {
     logger.error("Erro em getLoginStatus", error);
@@ -110,10 +137,22 @@ export const getLoginStatus = onRequest(async (req, res) => {
   }
 });
 
+/**
+ * Gera uma string aleatória codificada em base64url.
+ *
+ * @param {number} length - O comprimento da string desejada.
+ * @return {string}
+ */
 function generateRandomBase64(length: number): string {
   return crypto.randomBytes(length).toString("base64url").slice(0, length);
 }
 
+/**
+ * Gera um QR Code em formato Base64 a partir de um texto.
+ *
+ * @param {string} text - O texto a ser convertido em QR Code.
+ * @return {Promise<string>}
+ */
 async function generateQRCodeBase64(text: string): Promise<string> {
   return await QRCode.toDataURL(text);
 }
