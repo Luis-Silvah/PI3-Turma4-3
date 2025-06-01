@@ -27,6 +27,7 @@ import com.team43.superidpi3.screen.profile.ProfileScreen
 import com.team43.superidpi3.screen.qrcode.WithPermission
 import com.team43.superidpi3.screen.senha.AddSenhaScreen
 import com.team43.superidpi3.screen.senha.DeleteSenhaScreen
+import com.team43.superidpi3.screen.senha.EditSenhaScreen
 import com.team43.superidpi3.screen.signin.SignInScreen
 import com.team43.superidpi3.screen.signin.navigation.ForgotPasswordScreen
 import com.team43.superidpi3.screen.signup.SignUpScreen
@@ -121,6 +122,25 @@ fun AppNavHost(navController: NavHostController) {
                 categoriaNome = categoriaNome
             )
         }
+        composable(
+            route = "edit_senha/{senhaId}/{categoriaNome}",
+            arguments = listOf(
+                navArgument("senhaId") { type = NavType.StringType },
+                navArgument("categoriaNome") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val senhaId = backStackEntry.arguments?.getString("senhaId") ?: ""
+            val categoriaNome = backStackEntry.arguments?.getString("categoriaNome") ?: ""
+
+            EditSenhaScreen(
+                navController = navController,
+                padding = PaddingValues(0.dp),
+                senhaId = senhaId,
+                categoriaNome = categoriaNome
+            )
+        }
+
+
         composable("deletecategoria/{categoriaNome}/{idUsuario}") { backStackEntry ->
             val categoriaNome = backStackEntry.arguments?.getString("categoriaNome") ?: ""
             val idUsuario = backStackEntry.arguments?.getString("idUsuario") ?: ""

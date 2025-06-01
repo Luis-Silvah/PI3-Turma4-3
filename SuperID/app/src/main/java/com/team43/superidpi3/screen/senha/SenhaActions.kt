@@ -3,17 +3,146 @@ package com.team43.superidpi3.screen.senha
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.team43.superidpi3.domain.Senha
+import com.team43.superidpi3.utils.Criptografia
 import kotlinx.coroutines.tasks.await
 
 class SenhaActions {
     private val db = FirebaseFirestore.getInstance()
+    fun salvarSenha(
+        idUsuario: String,
+        nome: String,
+        senha: String,
+        nomeCategoria: String,
+        descricao: String?,
+        login: String?,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        val db = FirebaseFirestore.getInstance()
 
-    // Usando callbacks normais, mas com múltiplas chamadas assíncronas encadeadas
+        val senhaCriptografada = Criptografia.encrypt(senha)
+
+        db.collection("usuarios")
+            .document(idUsuario)
+            .collection("categorias")
+            .whereEqualTo("nome", nomeCategoria)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    val categoriaDoc = querySnapshot.documents.first()
+                    val categoriaId = categoriaDoc.id
+
+                    val senhaRef = db.collection("usuarios")
+                        .document(idUsuario)
+                        .collection("categorias")
+                        .document(categoriaId)
+                        .collection("senhas")
+                        .document()
+
+                    val novaSenha = hashMapOf(
+                        "id" to senhaRef.id,
+                        "nome" to nome,
+                        "senha" to senhaCriptografada,
+                        "categoria" to nomeCategoria,
+                        "descricao" to (descricao ?: ""),
+                        "login" to (login ?: "")
+                    )
+
+                    senhaRef.set(novaSenha)
+                        .addOnSuccessListener { onSuccess() }
+                        .addOnFailureListener { exception -> onFailure(exception) }
+
+                } else {
+                    onFailure(Exception("Categoria não encontrada."))
+                }
+            }
+            .addOnFailureListener { exception ->
+                onFailure(exception)
+            }
+    }
+    fun deletarSenha(
+        firestore: FirebaseFirestore,
+        userId: String,
+        categoriaNome: String,
+        senhaId: String,
+        onSuccess: () -> Unit,
+        onError: (Exception) -> Unit
+    ) {
+
+        firestore.collection("usuarios")
+            .document(userId)
+            .collection("categorias")
+            .whereEqualTo("nome", categoriaNome)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    val categoriaDoc = querySnapshot.documents[0]
+                    val categoriaId = categoriaDoc.id
+
+                    firestore.collection("usuarios")
+                        .document(userId)
+                        .collection("categorias")
+                        .document(categoriaId)
+                        .collection("senhas")
+                        .document(senhaId)
+                        .delete()
+                        .addOnSuccessListener {
+                            onSuccess()
+                        }
+                        .addOnFailureListener { e ->
+                            onError(e)
+                        }
+                } else {
+                    onError(Exception("Categoria com nome $categoriaNome não encontrada"))
+                }
+            }
+            .addOnFailureListener { e ->
+                onError(e)
+            }
+    }
+    fun editarSenha(
+        userId: String,
+        categoriaNome: String,
+        senhaId: String,
+        novosDados: Map<String, String>,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("usuarios")
+            .document(userId)
+            .collection("categorias")
+            .whereEqualTo("nome", categoriaNome)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    val categoriaDoc = querySnapshot.documents[0]
+                    val categoriaId = categoriaDoc.id
+
+                    val senhaRef = db.collection("usuarios")
+                        .document(userId)
+                        .collection("categorias")
+                        .document(categoriaId)
+                        .collection("senhas")
+                        .document(senhaId)
+
+                    senhaRef.update(novosDados as Map<String, Any>)
+                        .addOnSuccessListener { onSuccess() }
+                        .addOnFailureListener { onFailure(it) }
+                } else {
+                    onFailure(Exception("Categoria não encontrada."))
+                }
+            }
+            .addOnFailureListener { onFailure(it) }
+    }
+
+
+
     fun buscarSenhasDoUsuario(
         idUsuario: String,
         onResult: (List<Senha>) -> Unit
     ) {
-        // Primeiro buscar categorias do usuário
         db.collection("usuarios")
             .document(idUsuario)
             .collection("categorias")
@@ -21,7 +150,6 @@ class SenhaActions {
             .addOnSuccessListener { categoriasSnapshot ->
 
                 if (categoriasSnapshot.isEmpty) {
-                    // Sem categorias, retorna lista vazia
                     onResult(emptyList())
                     return@addOnSuccessListener
                 }

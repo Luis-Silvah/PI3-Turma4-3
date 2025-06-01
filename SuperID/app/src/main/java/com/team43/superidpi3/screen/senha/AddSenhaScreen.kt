@@ -18,58 +18,7 @@ import com.team43.superidpi3.screen.categoria.CategoriaActions
 import com.team43.superidpi3.ui.theme.SuperIDTextWhite
 import com.team43.superidpi3.utils.Criptografia
 
-fun salvarSenha(
-    idUsuario: String,
-    nome: String,
-    senha: String,
-    nomeCategoria: String,
-    descricao: String?,
-    login: String?,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit
-) {
-    val db = FirebaseFirestore.getInstance()
 
-    val senhaCriptografada = Criptografia.encrypt(senha)
-
-    db.collection("usuarios")
-        .document(idUsuario)
-        .collection("categorias")
-        .whereEqualTo("nome", nomeCategoria)
-        .get()
-        .addOnSuccessListener { querySnapshot ->
-            if (!querySnapshot.isEmpty) {
-                val categoriaDoc = querySnapshot.documents.first()
-                val categoriaId = categoriaDoc.id
-
-                val senhaRef = db.collection("usuarios")
-                    .document(idUsuario)
-                    .collection("categorias")
-                    .document(categoriaId)
-                    .collection("senhas")
-                    .document()
-
-                val novaSenha = hashMapOf(
-                    "id" to senhaRef.id,
-                    "nome" to nome,
-                    "senha" to senhaCriptografada,
-                    "categoria" to nomeCategoria,
-                    "descricao" to (descricao ?: ""),
-                    "login" to (login ?: "")
-                )
-
-                senhaRef.set(novaSenha)
-                    .addOnSuccessListener { onSuccess() }
-                    .addOnFailureListener { exception -> onFailure(exception) }
-
-            } else {
-                onFailure(Exception("Categoria não encontrada."))
-            }
-        }
-        .addOnFailureListener { exception ->
-            onFailure(exception)
-        }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -85,6 +34,8 @@ fun AddSenhaScreen(
     var categoria by remember { mutableStateOf("") }
 
     val categoriaActions = remember { CategoriaActions() }
+    val senhaActions = remember { SenhaActions() }
+
     val categoriasFirebaseState = remember { mutableStateOf(listOf<String>()) }
 
     LaunchedEffect(idUsuario) {
@@ -117,10 +68,20 @@ fun AddSenhaScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         InputField(
-            label = "Serviço",
+            label = "Nome",
             value = nome,
             onValueChange = { nome = it },
             placeholder = "Digite o nome do serviço",
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        InputField(
+            label = "Login (opcional)",
+            value = login,
+            onValueChange = { login = it },
+            placeholder = "Digite o login",
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -132,16 +93,6 @@ fun AddSenhaScreen(
             onValueChange = { senha = it },
             placeholder = "Digite a senha",
             isPassword = true,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        InputField(
-            label = "Login (opcional)",
-            value = login,
-            onValueChange = { login = it },
-            placeholder = "Digite o login",
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -198,7 +149,7 @@ fun AddSenhaScreen(
             height = 54.dp,
             enabled = nome.isNotBlank() && senha.isNotBlank() && categoria.isNotBlank(),
             onClick = {
-                salvarSenha(
+                senhaActions.salvarSenha(
                     idUsuario = idUsuario,
                     nome = nome,
                     senha = senha,

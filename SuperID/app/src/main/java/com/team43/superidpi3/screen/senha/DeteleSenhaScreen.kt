@@ -17,57 +17,17 @@ import com.team43.superidpi3.components.InputField
 import com.team43.superidpi3.navigation.Routes
 import com.team43.superidpi3.ui.theme.SuperIDTextWhite
 
-fun deletarSenha(
-    firestore: FirebaseFirestore,
-    userId: String,
-    categoriaNome: String,
-    senhaId: String,
-    onSuccess: () -> Unit,
-    onError: (Exception) -> Unit
-) {
-    // 1. Busca a categoria pelo campo "nome"
-    firestore.collection("usuarios")
-        .document(userId)
-        .collection("categorias")
-        .whereEqualTo("nome", categoriaNome)
-        .get()
-        .addOnSuccessListener { querySnapshot ->
-            if (!querySnapshot.isEmpty) {
-                val categoriaDoc = querySnapshot.documents[0]
-                val categoriaId = categoriaDoc.id
-
-                // 2. Deleta a senha na categoria correta
-                firestore.collection("usuarios")
-                    .document(userId)
-                    .collection("categorias")
-                    .document(categoriaId)
-                    .collection("senhas")
-                    .document(senhaId)
-                    .delete()
-                    .addOnSuccessListener {
-                        onSuccess()
-                    }
-                    .addOnFailureListener { e ->
-                        onError(e)
-                    }
-            } else {
-                onError(Exception("Categoria com nome $categoriaNome não encontrada"))
-            }
-        }
-        .addOnFailureListener { e ->
-            onError(e)
-        }
-}
 
 @Composable
 fun DeleteSenhaScreen(
     navController: NavController,
     padding: PaddingValues,
     senhaId: String,
-    categoriaNome: String // <- NOVO PARÂMETRO
+    categoriaNome: String
 ) {
     var confirmText by remember { mutableStateOf("") }
     val firestore = FirebaseFirestore.getInstance()
+    val SenhaActions = remember { SenhaActions() }
     val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
     Column(
@@ -112,7 +72,7 @@ fun DeleteSenhaScreen(
 
         Button(
             onClick = {
-                deletarSenha(
+                SenhaActions.deletarSenha(
                     firestore = firestore,
                     userId = userId,
                     categoriaNome = categoriaNome,
@@ -121,7 +81,6 @@ fun DeleteSenhaScreen(
                         navController.popBackStack()
                     },
                     onError = { e ->
-                        // Aqui você pode mostrar um Toast, Snackbar ou Log
                         println("Erro ao deletar senha: ${e.message}")
                     }
                 )

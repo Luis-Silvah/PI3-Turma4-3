@@ -129,6 +129,8 @@ fun SenhaCard(
                     DropdownMenuItem(
                         onClick = {
                             expanded = false
+                            navController.navigate("edit_senha/${senhaId}/${categoriaNome}")
+
                         },
                         text = {
                             Text("Editar")
@@ -141,13 +143,6 @@ fun SenhaCard(
                         },
                         text = {
                             Text("Deletar")
-                        })
-                    DropdownMenuItem(
-                        onClick = {
-                            expanded = false
-                        },
-                        text = {
-                            Text("Ler Qrcode")
                         })
                 }
             }
