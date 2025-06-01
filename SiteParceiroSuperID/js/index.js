@@ -1,6 +1,6 @@
 const PROJECT_ID = "superid-pi3-turma4-3";
 const API_KEY =
-  "LAGUMqOQjmU46NAjlXzqvoiCg1di6Husttqob9mPN6ro5jzZqT7AixmNn86Pc6injc2dh5G81BRw0Ws8Y5DgLJ1cwsYUsLfpUH5tE3oGXeifsZ7swBW1PKTXD8i8SuSv";
+  "y7QAANKBedPovC-wkOG_Pru_5cz-cbEilGQsS0wUINkfjqFBskZvumDrllOQ4R_V9LeXLqVs6lrDFUzwi35RUu0j1BgRjK4ozltngFdcG0sI7qo8-xMsin6EVXpUahD3_JNlXxSMyzapFZQCpnohk5rvUWkYFH0aLrqg_xhKJCmrPA3WRcmZz_jlGiEUM_Dz33e3QyEFPmk0RH7PIQdQej26mJZoM4H0H9iOHD6Bpsp-kzst0PHsWuFu_2oYR1OL";
 const SITE_URL = "www.example.com";
 
 let loginToken = null;

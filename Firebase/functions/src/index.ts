@@ -22,6 +22,7 @@ export const createSiteParceiro = onRequest(async (req, res) => {
   await db.collection("partners").add({ url, apiKey, email: emailResponsavel });
 
   logger.info("Parceiro criado:", { apiKey, url });
+  res.send({ msg: "Parceiro ciado!", apiKey, url });
 });
 
 export const performAuth = onRequest(async (req, res) => {
