@@ -1,6 +1,6 @@
 package com.team43.superidpi3.screen.home.components
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,10 +29,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.team43.superidpi3.R
 import com.team43.superidpi3.ui.theme.SuperIDGrayPrimary
 import com.team43.superidpi3.ui.theme.SuperIDTextWhite
 import com.team43.superidpi3.ui.theme.SuperIDWhite
@@ -67,11 +68,13 @@ fun SenhaCard(
             modifier = Modifier.padding(16.dp)
         ) {
             // Ícone do app
-            Box(
+            Image(
+                painter = painterResource(id = R.drawable.cardicon),
+                contentDescription = "Ícone do cartão",
                 modifier = Modifier
-                    .size(40.dp)
-                    .background(Color(0xFF0066FF), shape = RoundedCornerShape(8.dp))
+                    .size(50.dp)
             )
+
 
             Spacer(modifier = Modifier.width(12.dp))
 

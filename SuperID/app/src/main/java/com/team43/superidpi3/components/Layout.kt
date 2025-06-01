@@ -51,7 +51,7 @@ fun Layout(
     navController: NavController,
     title: String,
     idUsuario: String,
-    isSearch: Boolean = true,
+    isSearch: Boolean = false,
     isProfile: Boolean = true,
     floatingActionButton: @Composable () -> Unit,
     content: @Composable (PaddingValues) -> Unit
