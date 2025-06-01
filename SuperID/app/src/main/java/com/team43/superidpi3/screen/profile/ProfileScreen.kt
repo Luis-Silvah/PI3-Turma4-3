@@ -2,7 +2,6 @@ package com.team43.superidpi3.screen.profile
 
 import android.annotation.SuppressLint
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -42,12 +40,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.team43.superidpi3.components.BtnPrimary
 import com.team43.superidpi3.ui.theme.SuperIDTextWhite
+import com.team43.superidpi3.ui.theme.SuperIDButtonRed
 import com.team43.superidpi3.utils.VerificarEmail
-
+import com.team43.superidpi3.navigation.Routes
+import com.team43.superidpi3.screen.signin.navigation.ForgotPasswordActions
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("AutoboxingStateCreation", "RememberReturnType")
 @Composable
@@ -148,7 +149,7 @@ fun ProfileScreen(idUsuario: String, navController: NavController, padding: Padd
                             Row {
                                 IconButton(onClick = { VerificarEmail(ctx).verifica { emailVerificado ->
                                     if (!emailVerificado) {
-                                        Toast.makeText(ctx, "Seu email ainda não foi verificado.", Toast.LENGTH_SHORT).show()
+                                        // Nenhum Toast deve existir neste arquivo
                                     } else {
                                         ProfileActions.buscaUsuario(idUsuario) { dados ->
                                             usuarioState.value = dados
@@ -167,9 +168,9 @@ fun ProfileScreen(idUsuario: String, navController: NavController, padding: Padd
                                         usuarioAuth?.sendEmailVerification()
                                             ?.addOnCompleteListener { verificationTask ->
                                                 if (verificationTask.isSuccessful) {
-                                                    Toast.makeText(ctx, "Email de verificação enviado", Toast.LENGTH_SHORT).show()
+                                                    // Nenhum Toast deve existir neste arquivo
                                                 } else {
-                                                    Toast.makeText(ctx, "Limite de reenvios atingido. Tente novamente mais tarde.", Toast.LENGTH_SHORT).show()
+                                                    // Nenhum Toast deve existir neste arquivo
                                                 }
                                             }
                                     },
@@ -188,12 +189,46 @@ fun ProfileScreen(idUsuario: String, navController: NavController, padding: Padd
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            BtnPrimary("Sair", 54.dp, true) { ProfileActions.logout() }
+            BtnPrimary(
+                label = "Alterar Senha Mestre",
+                height = 54.dp,
+                enabled = true,
+                onClick = {
+                    val db = Firebase.firestore
+                    val usuarioAuth = Firebase.auth.currentUser
+                    usuarioState.value?.let { usuario ->
+                        val email = usuario["email"]?.toString() ?: ""
+                        val idUsuarioAtual = usuario["uid"]?.toString() ?: ""
+                        db.collection("usuarios")
+                            .whereEqualTo("email", email)
+                            .get()
+                            .addOnSuccessListener { documents ->
+                                if (!documents.isEmpty) {
+                                    val doc = documents.first()
+                                    val verificado = doc.getBoolean("emailVerificado") ?: false
+                                    if (verificado) {
+                                        val ForgotPasswordActions = com.team43.superidpi3.screen.signin.navigation.ForgotPasswordActions(ctx)
+                                        ForgotPasswordActions.recuperarSenha(email) {
+                                            navController.navigate(Routes.emailSentSuccess(idUsuarioAtual))
+                                        }
+                                    } else {
+                                        navController.navigate(Routes.emailSentFail(idUsuarioAtual))
+                                    }
+                                } else {
+                                    navController.navigate(Routes.emailSentFail(idUsuarioAtual))
+                                }
+                            }
+                    }
+                }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            BtnPrimary("Sair", 54.dp, true, { ProfileActions.logout() }, containerColor = SuperIDButtonRed)
         }
     }
 
 }
-
 
 
 @Composable

@@ -51,7 +51,7 @@ class SignUpActions(private val ctx: Context, private val navController: NavCont
                         "ERROR_USER_DISABLED" -> "Conta desativada. Entre em contato com o suporte"
                         else -> "Não foi possível criar usuário"
                     }
-                    Toast.makeText(ctx, toast, Toast.LENGTH_LONG).show()
+//                    Toast.makeText(ctx, toast, Toast.LENGTH_LONG).show()
                     Log.e(TAG, "Erro ao criar conta: ${task.exception?.localizedMessage}")
                 }
             }

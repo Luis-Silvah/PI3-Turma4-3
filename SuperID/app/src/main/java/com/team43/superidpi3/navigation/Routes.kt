@@ -18,6 +18,8 @@ object Routes {
     const val deleteCategoriaBase = "deletecategoria"
 
     const val Popup = "popup?idUsuario={idUsuario}&status={status}&mensagem={mensagem}"
+    const val EmailSentSuccess = "emailSentSuccess"
+
     fun deleteCategoria(idUsuario: String, categoriaNome: String) =
         "$deleteCategoriaBase/$idUsuario/$categoriaNome"
 
@@ -29,5 +31,9 @@ object Routes {
     fun addCategoria(idUsuario: String) = "addCategoria/$idUsuario"
 
     fun popup(idUsuario: String, status: String, mensagem: String) = "popup?idUsuario=$idUsuario&status=$status&mensagem=$mensagem"
+
+    fun emailSentSuccess(idUsuario: String) = "emailSentSuccess/$idUsuario"
+
+    fun emailSentFail(idUsuario: String) = "emailSentFail/$idUsuario"
 
 }

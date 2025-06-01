@@ -228,6 +228,22 @@ fun AppNavHost(navController: NavHostController) {
             )
         }
 
+        composable(
+            route = Routes.EmailSentSuccess + "/{idUsuario}",
+            arguments = listOf(navArgument("idUsuario") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val idUsuario = backStackEntry.arguments?.getString("idUsuario") ?: ""
+            com.team43.superidpi3.screen.signin.navigation.EmailSentSuccessScreen(navController, idUsuario)
+        }
+
+        composable(
+            route = Routes.emailSentFail("{idUsuario}"),
+            arguments = listOf(navArgument("idUsuario") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val idUsuario = backStackEntry.arguments?.getString("idUsuario") ?: ""
+            com.team43.superidpi3.screen.signin.navigation.EmailSentFailScreen(navController, idUsuario)
+        }
+
     }
 }
 

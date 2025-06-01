@@ -44,9 +44,9 @@ fun SplashScreen(navController: NavHostController) {
         if (usuario != null) {
 
             VerificarEmail(ctx).verifica { emailVerificado ->
-                if (!emailVerificado) {
-                    Toast.makeText(ctx, "Seu email ainda não foi verificado.", Toast.LENGTH_SHORT).show()
-                }
+//                if (!emailVerificado) {
+//                    Toast.makeText(ctx, "Seu email ainda não foi verificado.", Toast.LENGTH_SHORT).show()
+//                }
              }
 
             // Usuário está logado
