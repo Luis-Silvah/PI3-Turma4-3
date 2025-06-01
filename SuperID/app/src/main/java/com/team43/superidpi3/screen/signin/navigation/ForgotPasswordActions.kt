@@ -35,19 +35,19 @@ class ForgotPasswordActions(private val ctx: Context) {
         verificarEmailNoFirestore(email) { existe, verificado ->
             when {
                 !existe -> {
-                    Toast.makeText(ctx, "Email não encontrado", Toast.LENGTH_LONG).show()
+//                    Toast.makeText(ctx, "Email não encontrado", Toast.LENGTH_LONG).show()
                 }
                 !verificado -> {
-                    Toast.makeText(ctx, "Por favor, verifique seu email antes de solicitar a recuperação de senha", Toast.LENGTH_LONG).show()
+//                    Toast.makeText(ctx, "Por favor, verifique seu email antes de solicitar a recuperação de senha", Toast.LENGTH_LONG).show()
                 }
                 else -> {
                 auth.sendPasswordResetEmail(email)
                     .addOnCompleteListener {
-                        Toast.makeText(
-                            ctx,
-                            "E-mail de recuperação enviado com sucesso.",
-                            Toast.LENGTH_LONG
-                        ).show()
+//                        Toast.makeText(
+//                            ctx,
+//                            "E-mail de recuperação enviado com sucesso.",
+//                            Toast.LENGTH_LONG
+//                        ).show()
                         navigate()
                     }
                 }

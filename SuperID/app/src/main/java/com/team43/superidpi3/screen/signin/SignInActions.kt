@@ -41,7 +41,7 @@ class SignInActions(private val ctx: Context, private val navController: NavCont
                         "ERROR_USER_DISABLED" -> "Conta desativada. Entre em contato com o suporte"
                         else -> "Erro ao fazer login. Tente novamente mais tarde"
                     }
-                    Toast.makeText(ctx, toast, Toast.LENGTH_LONG).show()
+                    // Toast.makeText(ctx, toast, Toast.LENGTH_LONG).show()
                     Log.e(TAG, "Erro de login: $errorCode")
                 }
             }
