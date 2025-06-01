@@ -17,6 +17,7 @@ object Routes {
     const val Qrcode = "qrcode/{idUsuario}"
     const val deleteCategoriaBase = "deletecategoria"
 
+    const val Popup = "popup?idUsuario={idUsuario}&status={status}&mensagem={mensagem}"
     fun deleteCategoria(idUsuario: String, categoriaNome: String) =
         "$deleteCategoriaBase/$idUsuario/$categoriaNome"
 
@@ -26,5 +27,7 @@ object Routes {
     fun profile(idUsuario: String) = "profile/${idUsuario}"
     fun addSenha(idUsuario: String) = "addSenha/${idUsuario}"
     fun addCategoria(idUsuario: String) = "addCategoria/$idUsuario"
+
+    fun popup(idUsuario: String, status: String, mensagem: String) = "popup?idUsuario=$idUsuario&status=$status&mensagem=$mensagem"
 
 }

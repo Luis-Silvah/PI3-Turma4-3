@@ -10,6 +10,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -20,6 +21,7 @@ import com.team43.superidpi3.screen.categoria.AddCategoriaScreen
 import com.team43.superidpi3.screen.categoria.CategoriaScreen
 import com.team43.superidpi3.screen.categoria.DeleteCategoriaScreen
 import com.team43.superidpi3.screen.home.HomeScreen
+import com.team43.superidpi3.screen.popup.PopupScreen
 import com.team43.superidpi3.screen.qrcode.CameraAppScreen
 import com.team43.superidpi3.screen.profile.ProfileScreen
 import com.team43.superidpi3.screen.qrcode.WithPermission
@@ -130,11 +132,6 @@ fun AppNavHost(navController: NavHostController) {
             )
         }
 
-
-
-
-
-
         composable(Routes.AddCategoria) { backStackEntry ->
             val idUsuario = backStackEntry.arguments?.getString("idUsuario") ?: ""
             AddCategoriaScreen(navController, idUsuario)
@@ -165,7 +162,7 @@ fun AppNavHost(navController: NavHostController) {
                     modifier = Modifier.padding(padding),
                     permission = Manifest.permission.CAMERA
                 ) {
-                    CameraAppScreen()
+                    CameraAppScreen(navController)
                 }
             }
         }
@@ -180,11 +177,37 @@ fun AppNavHost(navController: NavHostController) {
         ) {
             val idUsuario = it.arguments?.getString("idUsuario") ?: ""
 
-            Layout(navController, "Perfil", idUsuario, isSearch = false, isProfile = false,
+            Layout(
+                navController, "Perfil", idUsuario, isSearch = false, isProfile = false,
                 floatingActionButton = {}) { padding ->
                 ProfileScreen(idUsuario, navController, padding)
             }
         }
+
+        composable(
+            route = Routes.Popup,
+            arguments = listOf(
+                navArgument("idUsuario") { type = NavType.StringType },
+                navArgument("status") { type = NavType.StringType },
+                navArgument("mensagem") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                    nullable = true
+                }
+            )
+        ) {
+            val idUsuario = it.arguments?.getString("idUsuario") ?: ""
+            val status = it.arguments?.getString("status") ?: "error"
+            val mensagem = it.arguments?.getString("mensagem") ?: ""
+
+            PopupScreen(
+                idUsuario = idUsuario,
+                status = status,
+                mensagem = mensagem,
+                navController = navController
+            )
+        }
+
     }
 }
 

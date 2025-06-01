@@ -24,9 +24,10 @@ import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.view.PreviewView
+import androidx.navigation.NavController
 
 @Composable
-fun CameraAppScreen() {
+fun CameraAppScreen(navController: NavController) {
     val lensFacing by remember { mutableIntStateOf(CameraSelector.LENS_FACING_BACK) }
     val zoomLevel by remember { mutableFloatStateOf(0.0f) }
     var qrCodeResult by remember { mutableStateOf<String?>(null) }
@@ -42,7 +43,7 @@ fun CameraAppScreen() {
 
         qrCodeResult?.let { result ->
             LaunchedEffect(result) {
-                QrCodeActions().updateLoginDocument(result)
+                QrCodeActions().updateLoginDocument(result, navController)
             }
         }
     }
