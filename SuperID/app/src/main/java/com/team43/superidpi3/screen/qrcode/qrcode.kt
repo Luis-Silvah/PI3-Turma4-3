@@ -40,8 +40,10 @@ fun CameraAppScreen() {
             }
         )
 
-        qrCodeResult?.let {
-            QrCodeActions().updateLoginDocument(it)
+        qrCodeResult?.let { result ->
+            LaunchedEffect(result) {
+                QrCodeActions().updateLoginDocument(result)
+            }
         }
     }
 }

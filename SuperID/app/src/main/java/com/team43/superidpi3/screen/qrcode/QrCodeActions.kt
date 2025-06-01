@@ -68,7 +68,9 @@ class QrCodeActions {
         }
 
         val userUid = currentUser.uid
-        val loginDocRef = db.collection("login").document(loginToken)
+        val tokenId = loginToken.substringAfterLast("/") // <- aqui
+        val loginDocRef = db.collection("login").document(tokenId)
+//        val loginDocRef = db.collection("login").document(loginToken)
 
         val updates = hashMapOf<String, Any>(
             "user" to userUid,
