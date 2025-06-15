@@ -87,7 +87,17 @@ fun EmailSentSuccessScreen(navController: NavController, idUsuario: String) {
                 label = "Voltar",
                 height = 54.dp,
                 enabled = true,
-                onClick = { navController.navigate(Routes.profile(idUsuario)) },
+                onClick = {
+                    if (idUsuario == "nologin") {
+                        navController.navigate(Routes.SignIn) {
+                            popUpTo(Routes.SignIn) { inclusive = true }
+                        }
+                    } else {
+                        navController.navigate(Routes.profile(idUsuario)) {
+                            popUpTo(Routes.profile(idUsuario)) { inclusive = true }
+                        }
+                    }
+                },
                 containerColor = SuperIDButtonBlue
             )
             Spacer(modifier = Modifier.height(24.dp))

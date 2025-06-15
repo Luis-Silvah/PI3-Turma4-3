@@ -45,7 +45,7 @@ import com.team43.superidpi3.ui.theme.SuperIDTextWhite
 @Composable
 fun ForgotPasswordScreen(navController: NavController) {
     val ctx = LocalContext.current
-    val ForgotPasswordActions = remember { ForgotPasswordActions(ctx) }
+    val ForgotPasswordActions = remember { ForgotPasswordActions(ctx, navController) }
     var email by remember { mutableStateOf("") }
 
     Column(
@@ -101,7 +101,7 @@ fun ForgotPasswordScreen(navController: NavController) {
         )
         Spacer(modifier = Modifier.height(24.dp))
         BtnPrimary("Enviar Email", 54.dp,email.isNotBlank(), {
-            ForgotPasswordActions.recuperarSenha(email, {navController.navigate(Routes.SignIn)})
+            ForgotPasswordActions.recuperarSenha(email)
         })
 //        Button(
 //            onClick = {

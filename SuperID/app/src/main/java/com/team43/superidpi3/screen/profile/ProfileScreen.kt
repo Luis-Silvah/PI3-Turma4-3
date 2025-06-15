@@ -207,10 +207,8 @@ fun ProfileScreen(idUsuario: String, navController: NavController, padding: Padd
                                     val doc = documents.first()
                                     val verificado = doc.getBoolean("emailVerificado") ?: false
                                     if (verificado) {
-                                        val ForgotPasswordActions = com.team43.superidpi3.screen.signin.navigation.ForgotPasswordActions(ctx)
-                                        ForgotPasswordActions.recuperarSenha(email) {
-                                            navController.navigate(Routes.emailSentSuccess(idUsuarioAtual))
-                                        }
+                                        val ForgotPasswordActions = com.team43.superidpi3.screen.signin.navigation.ForgotPasswordActions(ctx, navController)
+                                        ForgotPasswordActions.recuperarSenha(email)
                                     } else {
                                         navController.navigate(Routes.emailSentFail(idUsuarioAtual))
                                     }

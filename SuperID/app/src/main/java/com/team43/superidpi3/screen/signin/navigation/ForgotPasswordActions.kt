@@ -2,11 +2,13 @@ package com.team43.superidpi3.screen.signin.navigation
 
 import android.content.Context
 import android.widget.Toast
+import androidx.navigation.NavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.team43.superidpi3.navigation.Routes
 
-class ForgotPasswordActions(private val ctx: Context) {
+class ForgotPasswordActions(private val ctx: Context, private val navController: NavController) {
     fun verificarEmailNoFirestore(
         email: String,
         onResult: (existe: Boolean, verificado: Boolean) -> Unit
@@ -29,30 +31,26 @@ class ForgotPasswordActions(private val ctx: Context) {
             }
     }
 
-    fun recuperarSenha(email: String, navigate: () -> Unit) {
+    fun recuperarSenha(email: String) {
         val auth = Firebase.auth
+        val usuarioAuth = auth.currentUser
+        val idUsuario = usuarioAuth?.uid ?: "nologin"
 
         verificarEmailNoFirestore(email) { existe, verificado ->
             when {
                 !existe -> {
-//                    Toast.makeText(ctx, "Email não encontrado", Toast.LENGTH_LONG).show()
+                    navController.navigate(Routes.emailSentFail(idUsuario))
                 }
                 !verificado -> {
-//                    Toast.makeText(ctx, "Por favor, verifique seu email antes de solicitar a recuperação de senha", Toast.LENGTH_LONG).show()
+                    navController.navigate(Routes.emailSentFail(idUsuario))
                 }
                 else -> {
-                auth.sendPasswordResetEmail(email)
-                    .addOnCompleteListener {
-//                        Toast.makeText(
-//                            ctx,
-//                            "E-mail de recuperação enviado com sucesso.",
-//                            Toast.LENGTH_LONG
-//                        ).show()
-                        navigate()
-                    }
+                    auth.sendPasswordResetEmail(email)
+                        .addOnCompleteListener {
+                            navController.navigate(Routes.emailSentSuccess(idUsuario))
+                        }
                 }
             }
         }
     }
-
 }

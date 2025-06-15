@@ -68,21 +68,41 @@ fun EmailSentFailScreen(navController: NavController, idUsuario: String) {
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             Text(
-                text = "Você precisa validar seu email para usar esse recurso! Clique em validar email e tente novamente.",
+                text = "Você precisa validar seu email para usar esse recurso! Valide seu email e tente novamente.",
                 color = Color(0xFFBDBDBD),
                 fontSize = 16.sp,
                 modifier = Modifier.padding(bottom = 48.dp),
                 lineHeight = 20.sp
             )
             Spacer(modifier = Modifier.weight(1f))
+            if (idUsuario != "nologin") {
+                BtnPrimary(
+                    label = "Validar Email",
+                    height = 54.dp,
+                    enabled = true,
+                    onClick = {
+                        usuarioAuth?.sendEmailVerification()
+                    },
+                    containerColor = SuperIDButtonBlue
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
             BtnPrimary(
-                label = "Validar Email",
+                label = "Voltar",
                 height = 54.dp,
                 enabled = true,
                 onClick = {
-                    usuarioAuth?.sendEmailVerification()
+                    if (idUsuario == "nologin") {
+                        navController.navigate(Routes.SignIn) {
+                            popUpTo(Routes.SignIn) { inclusive = true }
+                        }
+                    } else {
+                        navController.navigate(Routes.profile(idUsuario)) {
+                            popUpTo(Routes.profile(idUsuario)) { inclusive = true }
+                        }
+                    }
                 },
-                containerColor = SuperIDButtonBlue
+                containerColor = Color.Gray
             )
             Spacer(modifier = Modifier.height(24.dp))
         }
